@@ -1,0 +1,93 @@
+import React, { useEffect, useState } from "react";
+import Navbar from "../layouts/Navbar";
+import { Link, json, useNavigate } from "react-router-dom";
+import { Button } from "../button/Button";
+import axios from "axios";
+import { data } from "autoprefixer";
+
+const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!email || !password) {
+      alert("Please fill in both email and password fields");
+    } else {
+      axios
+        .post("http://127.0.0.1:8000/api/login", { email, password })
+        .then((response) => {
+          setPassword("");
+          setEmail("");
+          // console.log(response.data.data.token);
+          // console.log(response.data.data.name);
+          if (!response.data.data.token) {
+            alert("Incorrect password or Email");
+          } else {
+            // localStorage.setItem("user", JSON.stringify(response.data.data));
+            localStorage.setItem("name", response.data.data.name);
+            localStorage.setItem("id", response.data.data.id);
+            console.log(localStorage.getItem("id"));
+            localStorage.setItem("type", response.data.data.type);
+            localStorage.setItem("token", response.data.data.token);
+            navigate("/");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
+
+  return (
+    <>
+      <section
+        className="bg-cover bg-center justify-center flex items-center h-screen"
+        style={{
+          backgroundImage:
+            "url('https://i.pinimg.com/originals/1f/2e/d7/1f2ed796410477e1a734a08a516a7c9e.jpg')",
+        }}
+      >
+        <div className="text-start  w-[650px] mx-auto p-5 md:p-12 bg-white rounded-lg shadow">
+          <form onSubmit={handleSubmit}>
+            <h3 className="my-5 uppercase font-merri font-bold md:text-section text-2xl text-green-leave">
+              Log in
+            </h3>
+            <div className="mb-6">
+              <input
+                type="text"
+                id="default-input"
+                placeholder="Email"
+                value={email}
+                name="email"
+                onChange={(e) => setEmail(e.target.value)}
+                className="bg-white border border-gray-300 text-classic text-sm rounded-lg focus:ring-classic focus:border-classic block w-full p-4"
+              />
+            </div>
+            <div className="mb-6">
+              <input
+                type="password"
+                id="default-input"
+                placeholder="Password"
+                value={password}
+                name="password"
+                onChange={(e) => setPassword(e.target.value)}
+                className="bg-white border border-gray-300 text-classic text-sm rounded-lg focus:ring-classic focus:border-classic block w-full p-4"
+              />
+            </div>
+            <span className="block text-end font-nunito opacity-55">
+              Forget Password ?
+            </span>
+            <div className="my-5">
+              <button className="w-full p-4 rounded-md bg-navy-blue text-white uppercase">
+                Submit
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </>
+  );
+};
+
+export default Login;

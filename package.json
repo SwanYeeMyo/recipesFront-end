@@ -10,7 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@preline/overlay": "^2.0.2",
     "axios": "^1.6.8",
+    "flowbite": "^2.3.0",
+    "flowbite-react": "^0.7.8",
     "preline": "^2.0.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
