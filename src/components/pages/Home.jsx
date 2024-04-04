@@ -42,7 +42,7 @@ const Home = () => {
           </div>
         </div>
       </div>
-      <section className="bg-white">
+      <section className="max-w-7xl mx-auto bg-white">
         <div className="sm:mt-24 flex flex-wrap item-center justify-between">
           <div className=" w-full sm:w-2/4 ">
             <div className=" max-w-lg p-12">
@@ -137,7 +137,7 @@ const Home = () => {
           </div>
         </div>
       </section>
-      <section className="bg-white">
+      <section className="max-w-7xl mx-auto  bg-white">
         <div className="sm:mt-24 flex flex-wrap item-center justify-between">
           <div className=" order-2 w-full sm:w-2/4 ">
             <div className=" max-w-lg  p-12 text-center">

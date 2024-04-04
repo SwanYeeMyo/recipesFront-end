@@ -7,30 +7,30 @@ const SignUp = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // const [gender, setGender] = useState("male");
-  // const [gender, setGender] = useState("");
-  // const [gender, setGender] = useState("");
-  const gender = "male";
-  const type = "free";
-  const image = "";
+  const [gender, setGender] = useState("");
+  const [image, setImage] = useState("");
+  const [type, setType] = useState("free");
 
   const [password_confirmation, setPasswordConfimration] = useState("");
   const navigate = useNavigate();
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios
-      .post("http://127.0.0.1:8000/api/register", {
-        name,
-        email,
-        password,
-        password_confirmation,
-        gender,
-        type,
-        image,
-      })
-      .then((res) => {
-        navigate("/login");
-      });
+    try {
+      axios
+        .post("http://127.0.0.1:8000/api/register", {
+          name,
+          email,
+          password,
+          password_confirmation,
+          image,
+          type,
+          gender,
+        })
+        .then((res) => {
+          alert("Success");
+          navigate("/login");
+        });
+    } catch {}
   };
   return (
     <section

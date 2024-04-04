@@ -1,6 +1,6 @@
 import React from "react";
 
-const Card = () => {
+const Card = ({ data }) => {
   return (
     <>
       <div class="flex flex-col bg-white border shadow-sm rounded ">

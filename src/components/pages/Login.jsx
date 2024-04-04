@@ -1,40 +1,36 @@
-import React, { useEffect, useState } from "react";
-import Navbar from "../layouts/Navbar";
-import { Link, json, useNavigate } from "react-router-dom";
-import { Button } from "../button/Button";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { data } from "autoprefixer";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!email || !password) {
-      alert("Please fill in both email and password fields");
+    if (!email.trim() || !password.trim()) {
+      setError("Please fill in both email and password fields");
     } else {
+      setError(""); // Reset error state
       axios
         .post("http://127.0.0.1:8000/api/login", { email, password })
         .then((response) => {
           setPassword("");
           setEmail("");
-          // console.log(response.data.data.token);
-          // console.log(response.data.data.name);
           if (!response.data.data.token) {
-            alert("Incorrect password or Email");
+            setError("Incorrect email or password");
           } else {
-            // localStorage.setItem("user", JSON.stringify(response.data.data));
             localStorage.setItem("name", response.data.data.name);
             localStorage.setItem("id", response.data.data.id);
-            console.log(localStorage.getItem("id"));
-            localStorage.setItem("type", response.data.data.type);
             localStorage.setItem("token", response.data.data.token);
-            navigate("/");
+            navigate("/recipes");
           }
         })
         .catch((error) => {
           console.log(error);
+          setError("Invalid password or email !");
         });
     }
   };
@@ -53,6 +49,7 @@ const Login = () => {
             <h3 className="my-5 uppercase font-merri font-bold md:text-section text-2xl text-green-leave">
               Log in
             </h3>
+            {error && <div className="mb-2 text-red-500">{error}</div>}
             <div className="mb-6">
               <input
                 type="text"

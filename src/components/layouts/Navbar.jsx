@@ -1,7 +1,32 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 const Navbar = () => {
+  const token = localStorage.getItem("token");
+
+  const [userData, setUserData] = useState([]);
+  const id = localStorage.getItem("id");
+
+  useEffect(() => {
+    if (id) {
+      const token = localStorage.getItem("token");
+      if (token) {
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        axios
+          .get("http://127.0.0.1:8000/api/users/" + id)
+          .then((res) => {
+            setUserData(res.data.data);
+          })
+          .catch((error) => {
+            console.error("Error fetching user data:", error);
+          });
+      } else {
+        console.error("No token found.");
+      }
+    }
+  }, [id]);
+
   return (
     <>
       <nav className="bg-white p-1 dark:bg-gray-900 fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
@@ -51,7 +76,7 @@ const Navbar = () => {
                   to={"/account"}
                   className="uppercase block font-medium text-gray-600 hover:text-classic dark:text-gray-400 dark:hover:text-gray-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
                 >
-                  {localStorage.getItem("name")}
+                  {userData.name}
                 </Link>
               ) : null}
             </div>
