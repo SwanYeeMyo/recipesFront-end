@@ -1,9 +1,9 @@
 import React from "react";
 
-const Card = ({ data }) => {
+const Card = ({ recipes }) => {
   return (
     <>
-      <div class="flex flex-col bg-white border shadow-sm rounded ">
+      <div class="flex flex-col  ">
         <div className="overflow-hidden relative ">
           <img
             class="w-full max-h-[177px]  object-cover transition-transform duration-300 transform hover:scale-110"

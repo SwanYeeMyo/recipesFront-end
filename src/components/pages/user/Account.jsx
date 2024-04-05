@@ -28,7 +28,7 @@ const Account = () => {
         try {
           const res = await axios.get("http://127.0.0.1:8000/api/users/" + id);
           setUserData(res.data.data);
-          toast.success("User data fetched successfully");
+          // toast.success("User data fetched successfully");
         } catch (error) {
           console.error("Error fetching user data:", error);
           toast.error("Failed to fetch user data");
