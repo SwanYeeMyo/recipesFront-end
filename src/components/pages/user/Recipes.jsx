@@ -1,11 +1,18 @@
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const Recipes = () => {
   const [title, setTitle] = useState("");
   const [kitchen_note, setKitchenNote] = useState("");
   const [author_note, setAuthorNote] = useState("");
   const [cookTime, setCookTime] = useState("");
-  const [serveTime, setServeTime] = useState("");
+  const [serving, setServing] = useState("");
   const [prepTime, setPrepTime] = useState("");
+  const [images, setImages] = useState([]);
+  const [dishTypes, setDistypes] = useState([]);
+  const [selectedDishTypes, setSelectedDishTypes] = useState([]);
+
   const user_id = localStorage.getItem("id");
 
   const [ingredients, setIngredients] = useState([
@@ -15,6 +22,12 @@ const Recipes = () => {
       name: "",
     },
   ]);
+  const [directions, setDirections] = useState([
+    {
+      step: "",
+    },
+  ]);
+
   const handleInputChange = (index, event) => {
     const value = [...ingredients];
     if (event.target.name === "qty") {
@@ -30,25 +43,13 @@ const Recipes = () => {
   const handleAddFields = () => {
     setIngredients([...ingredients, { qty: "", measurement: "", name: "" }]);
   };
+
   const handleRemoveFields = (index) => {
     const values = [...ingredients];
     values.splice(index, 1);
     setIngredients(values);
   };
-  const handleAddDirection = () => {
-    setDirections([...directions, { step: "" }]);
-  };
-  const handleRemoveDirections = (index) => {
-    const values = [...directions];
-    values.splice(index, 1);
-    setDirections(values);
-  };
 
-  const [directions, setDirections] = useState([
-    {
-      step: "",
-    },
-  ]);
   const handleInputDirection = (event, index) => {
     const value = [...directions];
     if (event.target.name === "step") {
@@ -56,14 +57,108 @@ const Recipes = () => {
     }
     setDirections(value);
   };
-  const submitHandle = (e) => {
-    e.preventDefault();
-    alert("create success");
+
+  const handleAddDirection = () => {
+    setDirections([...directions, { step: "" }]);
   };
 
+  const handleRemoveDirections = (index) => {
+    const values = [...directions];
+    values.splice(index, 1);
+    setDirections(values);
+  };
+
+  const handleSelectChange = (event) => {
+    const selectedOptions = Array.from(
+      event.target.selectedOptions,
+      (option) => option.value
+    );
+    setSelectedDishTypes(selectedOptions);
+  };
+
+  useEffect(() => {
+    axios.get("http://127.0.0.1:8000/api/dishTypes").then((res) => {
+      setDistypes(res.data.status);
+      console.log(res.data.status[0].name);
+    });
+  }, []);
+
+  const postData = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("author_note", author_note || ""); // Ensure it's sent as empty string if null
+      formData.append("kitchen_note", kitchen_note || ""); // Ensure it's sent as empty string if null
+      formData.append("cook_time", parseInt(cookTime)); // Ensure it's sent as integer
+      formData.append("prep_time", parseInt(prepTime)); // Ensure it's sent as integer
+      formData.append("serving", parseInt(serving)); // Ensure it's sent as integer
+      formData.append("user_id", parseInt(user_id)); // Ensure it's sent as integer
+
+      // Append selected dish types to formData
+      selectedDishTypes.forEach((dishTypeId) => {
+        formData.append("types", parseInt(dishTypeId)); // Append as 'types', not 'types[]'
+      });
+
+      ingredients.forEach((ingredient, index) => {
+        formData.append(`ingredients[${index}][qty]`, ingredient.qty);
+        formData.append(
+          `ingredients[${index}][measurement]`,
+          ingredient.measurement
+        );
+        formData.append(`ingredients[${index}][name]`, ingredient.name);
+      });
+
+      directions.forEach((direction, index) => {
+        formData.append(`directions[${index}][step]`, direction.step);
+      });
+
+      images.forEach((image, index) => {
+        formData.append(`images[${index}]`, image);
+      });
+
+      // Send the data to the Laravel API endpoint
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/recipes",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      console.log(response.data);
+      toast.success("Recipe created successfully");
+    } catch (error) {
+      console.error("Error creating recipe:", error);
+      toast.error("Failed to create recipe");
+    }
+  };
+
+  const submitHandle = (e) => {
+    e.preventDefault();
+    if (
+      !title ||
+      !cookTime ||
+      !serving ||
+      !prepTime ||
+      ingredients.some(
+        (ingredient) =>
+          !ingredient.qty || !ingredient.measurement || !ingredient.name
+      ) ||
+      directions.some((direction) => !direction.step) ||
+      images.length === 0
+    ) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+    postData();
+  };
+  console.log(title);
   return (
     <>
       <div className="p-4 sm:ml-64 font-nunito">
+        <ToastContainer />
         <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg">
           <div>
             <h1 className="text-center">Recipes Create </h1>
@@ -78,19 +173,21 @@ const Recipes = () => {
                 </label>
                 <input
                   type="text"
-                  id="first_name"
+                  name="title"
+                  onChange={(e) => setTitle(e.target.value)}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Chicken Noodle Soup"
-                  required
                 />
               </div>
               <div className="mb-3">
-                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                <label
+                  onChange={(e) => setAuthorNote(e.target.value)}
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
                   Author_note
                 </label>
                 <textarea
                   name="author_nonte"
-                  id=""
                   className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                   cols="30"
                   rows="10"
@@ -103,7 +200,7 @@ const Recipes = () => {
                 </label>
                 <textarea
                   name="kitchen_note"
-                  id=""
+                  onChange={(e) => setKitchenNote(e.target.value)}
                   className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                   cols="30"
                   rows="10"
@@ -116,10 +213,10 @@ const Recipes = () => {
                   </label>
                   <input
                     type="text"
-                    id="first_name"
+                    name="cook_time"
+                    onChange={(e) => setCookTime(e.target.value)}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="John"
-                    required
                   />
                 </div>
                 <div className="flex-grow mb-4">
@@ -128,10 +225,10 @@ const Recipes = () => {
                   </label>
                   <input
                     type="text"
-                    id="first_name"
+                    name="prep_time"
+                    onChange={(e) => setPrepTime(e.target.value)}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="John"
-                    required
                   />
                 </div>
                 <div className="flex-grow mb-3">
@@ -139,21 +236,25 @@ const Recipes = () => {
                     Serving
                   </label>
                   <input
+                    name="serving"
                     type="text"
-                    id="first_name"
+                    onChange={(e) => setServing(e.target.value)}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="John"
-                    required
                   />
                 </div>
               </div>
               <div className="mb-3">
+                <label className="block mb-2">Select Image </label>
                 <input
                   type="file"
                   name="image[]"
-                  className="rounded-lg border w-full "
+                  className="rounded-lg border w-full"
+                  onChange={(e) => setImages([...images, ...e.target.files])}
+                  multiple
                 />
               </div>
+
               <div>
                 <div className="mb-3">
                   <h5 className="mb-3">Ingredeients</h5>
@@ -221,38 +322,15 @@ const Recipes = () => {
                 <div className="w-full">
                   <select
                     multiple
-                    data-hs-select='{
-  "placeholder": "Select multiple options...",
-  "toggleTag": "<button type=\"button\"></button>",
-  "toggleClasses": "hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50 relative py-3 px-4 pe-9 flex text-nowrap w-full cursor-pointer bg-white border border-gray-200 rounded-lg text-start text-sm focus:border-blue-500 focus:ring-blue-500 before:absolute before:inset-0 before:z-[1] dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400",
-  "dropdownClasses": "mt-2 z-50 w-full max-h-72 p-1 space-y-0.5 bg-white border border-gray-200 rounded-lg overflow-hidden overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-gray-700 dark:[&::-webkit-scrollbar-thumb]:bg-gray-500 dark:bg-slate-900 dark:border-gray-700",
-  "optionClasses": "py-2 px-4 w-full text-sm text-gray-800 cursor-pointer hover:bg-gray-100 rounded-lg focus:outline-none focus:bg-gray-100 dark:bg-slate-900 dark:hover:bg-slate-800 dark:text-gray-200 dark:focus:bg-slate-800",
-  "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"hidden hs-selected:block\"><svg class=\"flex-shrink-0 size-3.5 text-blue-600 dark:text-blue-500\" xmlns=\"http:.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"20 6 9 17 4 12\"/></svg></span></div>",
-  "extraMarkup": "<div class=\"absolute top-1/2 end-3 -translate-y-1/2\"><svg class=\"flex-shrink-0 size-3.5 text-gray-500 dark:text-gray-500\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m7 15 5 5 5-5\"/><path d=\"m7 9 5-5 5 5\"/></svg></div>"
-}'
-                    class="hidden"
+                    name="dis"
+                    className="w-full bg-gray-50 border"
                   >
-                    <option value="">Choose</option>
-                    <option>Name</option>
-                    <option>Email address</option>
-                    <option>Description</option>
-                    <option>User ID</option>
+                    {dishTypes.map((dish) => (
+                      <option key={dish.id} value={dish.id}>
+                        {dish.name}
+                      </option>
+                    ))}
                   </select>
-                  {/* <div className="relative flex w-full">
-                    <select
-                      id="select-role"
-                      name="dish_type[]"
-                      multiple
-                      placeholder="Select roles..."
-                      autoComplete="off"
-                      className="block w-full rounded-sm cursor-pointer focus:outline-none"
-                    >
-                      <option value="1">super admin</option>
-                      <option value="2">admin</option>
-                      <option value="3">writer</option>
-                      <option value="4">user</option>
-                    </select>
-                  </div> */}
                 </div>
               </div>
               <div className="  font-nunito">
@@ -296,12 +374,14 @@ const Recipes = () => {
                   </div>
                 ))}
               </div>
-              <button
-                type="submit"
-                className="bg-green-400 w-[150px] rounded-md  text-white border p-1"
-              >
-                Create
-              </button>
+              <div className="flex justify-end ">
+                <button
+                  type="submit"
+                  className="my-3 bg-green-400 w-[150px] rounded-md  text-white border p-1"
+                >
+                  Create
+                </button>
+              </div>
             </form>
           </div>
         </div>
