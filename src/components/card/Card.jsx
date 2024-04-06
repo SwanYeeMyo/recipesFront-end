@@ -1,9 +1,11 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
-const Card = ({ recipes }) => {
+const Card = ({ recipe }) => {
+  const { id, title, rating } = recipe;
   return (
     <>
-      <div class="flex flex-col  ">
+      <div class="flex flex-col hover:bg-white hover:shadow hover:h-full hover:rounded-md ">
         <div className="overflow-hidden relative ">
           <img
             class="w-full max-h-[177px]  object-cover transition-transform duration-300 transform hover:scale-110"
@@ -13,7 +15,7 @@ const Card = ({ recipes }) => {
         </div>
         <div class="p-4 md:p-5">
           <h3 class="mb-2 text-regular font-nunito font-semibold  text-gray-800 dark:text-white">
-            Creamy Skillet Rice With Chicken & Mushrooms
+            {title}
           </h3>
           <div className="flex font-nunito mb-6  justify-between items-center">
             <div>
@@ -31,9 +33,12 @@ const Card = ({ recipes }) => {
               </h5>
             </div>
           </div>
-          <button className="text-sm w-[152px] p-2 bg-navy-blue text-white">
+          <Link
+            to={`/recipes/${id}`}
+            className="block  text-center text-sm w-[152px] p-2 bg-navy-blue text-white"
+          >
             View
-          </button>
+          </Link>
         </div>
       </div>
     </>

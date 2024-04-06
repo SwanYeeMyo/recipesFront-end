@@ -41,7 +41,10 @@ const Recipes = () => {
   };
 
   const handleAddFields = () => {
-    setIngredients([...ingredients, { qty: "", measurement: "", name: "" }]);
+    setIngredients((prevIngredients) => [
+      ...prevIngredients,
+      { qty: "", measurement: "", name: "" },
+    ]);
   };
 
   const handleRemoveFields = (index) => {
@@ -96,7 +99,7 @@ const Recipes = () => {
 
       // Append selected dish types to formData
       selectedDishTypes.forEach((dishTypeId) => {
-        formData.append("types", parseInt(dishTypeId)); // Append as 'types', not 'types[]'
+        formData.append("types[]", parseInt(dishTypeId));
       });
 
       ingredients.forEach((ingredient, index) => {
@@ -115,7 +118,9 @@ const Recipes = () => {
       images.forEach((image, index) => {
         formData.append(`images[${index}]`, image);
       });
-
+      for (var pair of formData.entries()) {
+        console.log(pair[0] + ", " + pair[1]);
+      }
       // Send the data to the Laravel API endpoint
       const response = await axios.post(
         "http://127.0.0.1:8000/api/recipes",
@@ -154,7 +159,7 @@ const Recipes = () => {
     }
     postData();
   };
-  console.log(title);
+
   return (
     <>
       <div className="p-4 sm:ml-64 font-nunito">
@@ -298,6 +303,7 @@ const Recipes = () => {
                     {index === ingredients.length - 1 && (
                       <div className="flex md:mt-5 justify-center   items-center">
                         <button
+                          type="button"
                           onClick={handleAddFields}
                           className="text-white bg-navy-blue rounded w-[100px]"
                         >
@@ -308,6 +314,7 @@ const Recipes = () => {
                     {ingredients.length > 1 && (
                       <div className="flex md:mt-5 justify-center   items-center">
                         <button
+                          type="button"
                           onClick={handleRemoveFields}
                           className=" rounded w-[100px]"
                         >
@@ -322,7 +329,9 @@ const Recipes = () => {
                 <div className="w-full">
                   <select
                     multiple
-                    name="dis"
+                    name="dishTypes"
+                    value={selectedDishTypes}
+                    onChange={handleSelectChange}
                     className="w-full bg-gray-50 border"
                   >
                     {dishTypes.map((dish) => (
@@ -354,6 +363,7 @@ const Recipes = () => {
                     {index === directions.length - 1 && (
                       <div className="flex md:mt-5 justify-center   items-center">
                         <button
+                          type="button"
                           onClick={handleAddDirection}
                           className="text-white bg-navy-blue rounded w-[100px]"
                         >
@@ -364,6 +374,7 @@ const Recipes = () => {
                     {directions.length > 1 && (
                       <div className="flex md:mt-5 justify-center   items-center">
                         <button
+                          type="button"
                           onClick={handleRemoveDirections}
                           className=" rounded w-[100px]"
                         >
