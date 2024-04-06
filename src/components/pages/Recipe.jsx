@@ -9,7 +9,7 @@ const Recipe = () => {
   const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
-    axios.get("http://127.0.0.1:8000/api/Recipes").then((res) => {
+    axios.get("http://127.0.0.1:8000/api/recipes").then((res) => {
       console.log(res.data);
       setData(res.data.status);
       setTotalPages(Math.ceil(res.data.status.length / perPage));
@@ -56,9 +56,9 @@ const Recipe = () => {
                     onClick={() => paginate(i + 1)}
                     className={`min-h-[38px] min-w-[38px] flex justify-center items-center ${
                       currentPage === i + 1
-                        ? "bg-gray-200 text-gray-800"
+                        ? "bg-navy-blue text-white"
                         : "text-gray-800 hover:bg-gray-100"
-                    } py-2 px-3 text-sm rounded-lg focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:bg-gray-600 dark:text-white dark:focus:bg-gray-500`}
+                    } py-2 px-3 text-sm rounded-lg focus:outline-none focus:bg-navy-blue disabled:opacity-50 disabled:pointer-events-none `}
                     aria-current={currentPage === i + 1 ? "page" : null}
                   >
                     {i + 1}
