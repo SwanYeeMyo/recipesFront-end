@@ -5,19 +5,19 @@ import { Link, useNavigate } from "react-router-dom";
 const NavSideBar = () => {
 	const [userData, setUserData] = useState([]);
 
-	const navigate = useNavigate();
-	const logout = () => {
-		localStorage.clear();
-		navigate("/");
-	};
-	const goBack = () => {
-		navigate("/");
-	};
-	const id = localStorage.getItem("id");
-	// console.log(id);
-	useEffect(() => {
-		// Retrieve token from localStorage
-		const token = localStorage.getItem("token");
+  const navigate = useNavigate();
+  const logout = () => {
+    localStorage.clear();
+    navigate("/recipes");
+  };
+  const goBack = () => {
+    navigate("/recipes");
+  };
+  const id = localStorage.getItem("id");
+  // console.log(id);
+  useEffect(() => {
+    // Retrieve token from localStorage
+    const token = localStorage.getItem("token");
 
 		// Check if token exists
 		if (token) {

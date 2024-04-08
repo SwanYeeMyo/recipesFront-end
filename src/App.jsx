@@ -14,6 +14,7 @@ import Recipes from "./components/pages/user/Recipes";
 import Account from "./components/pages/user/Account";
 import Users from "./components/pages/Users";
 import EditUser from "./components/pages/EditUser";
+import Details from "./components/pages/Details";
 function App() {
 	return (
 		<BrowserRouter>
@@ -68,6 +69,7 @@ function AppContent() {
 					<Route path="/account/recipes" element={<Recipes />} />
 				)}
 				<Route path="/account/profile" element={<Account />}></Route>
+        <Route path="/recipes/:id" element={<Details />}></Route>
 			</Routes>
 			{!isExcludedRoute && <Footer />}
 		</>
