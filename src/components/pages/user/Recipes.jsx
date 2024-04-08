@@ -22,7 +22,7 @@ const Recipes = () => {
       name: "",
     },
   ]);
-  const [directions, setDirections] = useState([
+  const [steps, setSteps] = useState([
     {
       step: "",
     },
@@ -52,23 +52,22 @@ const Recipes = () => {
     values.splice(index, 1);
     setIngredients(values);
   };
-
   const handleInputDirection = (event, index) => {
-    const value = [...directions];
-    if (event.target.name === "step") {
+    const value = [...steps];
+    if (event.target.name === "steps") {
       value[index].step = event.target.value;
     }
-    setDirections(value);
+    setSteps(value);
   };
 
   const handleAddDirection = () => {
-    setDirections([...directions, { step: "" }]);
+    setSteps([...steps, { step: "" }]);
   };
 
-  const handleRemoveDirections = (index) => {
-    const values = [...directions];
+  const handleRemovesteps = (index) => {
+    const values = [...steps];
     values.splice(index, 1);
-    setDirections(values);
+    setSteps(values);
   };
 
   const handleSelectChange = (event) => {
@@ -78,11 +77,15 @@ const Recipes = () => {
     );
     setSelectedDishTypes(selectedOptions);
   };
-
+  const handleImageChange = (e) => {
+    const selectedImages = Array.from(e.target.files);
+    // Update the images state by concatenating the new images with the existing ones
+    setImages([...images, ...selectedImages]);
+  };
   useEffect(() => {
     axios.get("http://127.0.0.1:8000/api/dishTypes").then((res) => {
-      setDistypes(res.data.status);
-      console.log(res.data.status[0].name);
+      setDistypes(res.data.data);
+      console.log(res.data.data[0].name);
     });
   }, []);
 
@@ -90,14 +93,13 @@ const Recipes = () => {
     try {
       const formData = new FormData();
       formData.append("title", title);
-      formData.append("author_note", author_note || ""); // Ensure it's sent as empty string if null
-      formData.append("kitchen_note", kitchen_note || ""); // Ensure it's sent as empty string if null
-      formData.append("cook_time", parseInt(cookTime)); // Ensure it's sent as integer
-      formData.append("prep_time", parseInt(prepTime)); // Ensure it's sent as integer
-      formData.append("serving", parseInt(serving)); // Ensure it's sent as integer
-      formData.append("user_id", parseInt(user_id)); // Ensure it's sent as integer
+      formData.append("author_note", author_note || "");
+      formData.append("kitchen_note", kitchen_note || "");
+      formData.append("cook_time", parseInt(cookTime));
+      formData.append("prep_time", parseInt(prepTime));
+      formData.append("serving", parseInt(serving));
+      formData.append("user_id", parseInt(user_id));
 
-      // Append selected dish types to formData
       selectedDishTypes.forEach((dishTypeId) => {
         formData.append("types[]", parseInt(dishTypeId));
       });
@@ -111,16 +113,20 @@ const Recipes = () => {
         formData.append(`ingredients[${index}][name]`, ingredient.name);
       });
 
-      directions.forEach((direction, index) => {
-        formData.append(`directions[${index}][step]`, direction.step);
+      steps.forEach((step, index) => {
+        // Change 'steps' to 'steps'
+        formData.append(`steps[${index}]`, step.step); // Change 'steps' to 'steps'
       });
 
       images.forEach((image, index) => {
         formData.append(`images[${index}]`, image);
       });
+
+      // Output formData entries to console for debugging
       for (var pair of formData.entries()) {
         console.log(pair[0] + ", " + pair[1]);
       }
+
       // Send the data to the Laravel API endpoint
       const response = await axios.post(
         "http://127.0.0.1:8000/api/recipes",
@@ -151,7 +157,7 @@ const Recipes = () => {
         (ingredient) =>
           !ingredient.qty || !ingredient.measurement || !ingredient.name
       ) ||
-      directions.some((direction) => !direction.step) ||
+      steps.some((direction) => !direction.step) ||
       images.length === 0
     ) {
       toast.error("Please fill in all fields");
@@ -185,14 +191,13 @@ const Recipes = () => {
                 />
               </div>
               <div className="mb-3">
-                <label
-                  onChange={(e) => setAuthorNote(e.target.value)}
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
+                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                   Author_note
                 </label>
+                {author_note}
                 <textarea
-                  name="author_nonte"
+                  onChange={(e) => setAuthorNote(e.target.value)}
+                  name="author_note" // Ensure the name attribute is set correctly
                   className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                   cols="30"
                   rows="10"
@@ -255,7 +260,7 @@ const Recipes = () => {
                   type="file"
                   name="image[]"
                   className="rounded-lg border w-full"
-                  onChange={(e) => setImages([...images, ...e.target.files])}
+                  onChange={handleImageChange}
                   multiple
                 />
               </div>
@@ -344,7 +349,7 @@ const Recipes = () => {
               </div>
               <div className="  font-nunito">
                 <h4 className="my-3">Direction</h4>
-                {directions.map((inputField, index) => (
+                {steps.map((inputField, index) => (
                   <div key={index} className="flex gap-2  mb-3">
                     <div className="w-5 p-1 flex items-center justify-center rounded-full ">
                       <h5 className="bg-navy-blue text-white rounded-full p-2">
@@ -354,13 +359,13 @@ const Recipes = () => {
                     <textarea
                       onChange={(event) => handleInputDirection(event, index)}
                       value={inputField.step}
-                      name="step"
+                      name="steps"
                       id=""
                       className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                       cols="30"
                       rows="10"
                     ></textarea>
-                    {index === directions.length - 1 && (
+                    {index === steps.length - 1 && (
                       <div className="flex md:mt-5 justify-center   items-center">
                         <button
                           type="button"
@@ -371,11 +376,11 @@ const Recipes = () => {
                         </button>
                       </div>
                     )}
-                    {directions.length > 1 && (
+                    {steps.length > 1 && (
                       <div className="flex md:mt-5 justify-center   items-center">
                         <button
                           type="button"
-                          onClick={handleRemoveDirections}
+                          onClick={handleRemovesteps}
                           className=" rounded w-[100px]"
                         >
                           <i className="fa-solid fa-xmark"></i>
@@ -384,6 +389,23 @@ const Recipes = () => {
                     )}
                   </div>
                 ))}
+              </div>
+              <div className="mb-3">
+                <label
+                  for="countries"
+                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Select a type
+                </label>
+                <select
+                  id="countries"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                >
+                  <option value="free" selected>
+                    Free
+                  </option>
+                  <option value="premium">Premium</option>
+                </select>
               </div>
               <div className="flex justify-end ">
                 <button

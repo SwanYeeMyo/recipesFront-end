@@ -50,15 +50,12 @@ const SignUp = () => {
             email,
             password,
             password_confirmation,
-
             type,
             gender,
           }
         );
-        if (response.status === 200) {
-          alert("Success");
-          navigate("/login");
-        }
+        alert("Success");
+        navigate("/login");
       } catch (error) {
         console.error("Error:", error);
         // Handle error

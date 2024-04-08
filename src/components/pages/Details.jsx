@@ -13,13 +13,19 @@ const Details = () => {
   const [detail, setDetail] = useState([]);
   const [direction, setDirections] = useState([]);
   const [ingredient, setIngredients] = useState([]);
+  const [images, setImages] = useState([]);
 
   const { id } = useParams();
   console.log(id);
   useEffect(() => {
     axios.get("http://127.0.0.1:8000/api/recipes/" + id).then((res) => {
-      setDetail(res.data.status);
-      console.log(res.data);
+      // console.log(res.data);
+      setDetail(res.data.data);
+      // console.log(res.data.data["directions"]);
+      setDirections(res.data.data["directions"]);
+      setIngredients(res.data.data["ingredients"]);
+      setImages(res.data.data["images"]);
+      // console.log(res.data.data["ingredients"]);
     });
   }, []);
 
@@ -66,24 +72,14 @@ const Details = () => {
         </div>
 
         <Carousel>
-          <div>
-            <img
-              className="object-center object-cover max-h-[500px]"
-              src="https://images.unsplash.com/photo-1569058242276-0bc3e078cf86?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            />
-          </div>
-          <div>
-            <img
-              className="object-center object-cover max-h-[500px]"
-              src="https://images.unsplash.com/photo-1612966948332-81d747414a8f?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            />
-          </div>
-          <div>
-            <img
-              className="object-center object-cover max-h-[500px]"
-              src="assets/3.jpeg"
-            />
-          </div>
+          {images.map((img, index) => (
+            <div key={index}>
+              <img
+                className="object-cover max-h-[644px] "
+                src={"http://127.0.0.1:8000/recipe_img/" + img.name}
+              />
+            </div>
+          ))}
         </Carousel>
 
         <div className="max-w-[1088px] mx-auto mt-10">
@@ -115,18 +111,18 @@ const Details = () => {
             </div>
           </div>
 
-          <div className="mt-10 flex gap-10 justify-center">
-            <div className="w-[170px] h-[85px] border-none bg-slate-300 flex flex-col items-center justify-center">
-              <p className="font-light">PREP TIME</p>
-              <p className="font-thin">{detail.cook_time} mins</p>
+          <div className="mt-10 flex gap-10 justify-center bg-navy-blue">
+            <div className="w-[170px] h-[85px]  flex flex-col items-center justify-center">
+              <p className="font-light text-white">PREP TIME</p>
+              <p className="font-thin text-white">{detail.cook_time} mins</p>
             </div>
-            <div className="w-[170px] h-[85px] border-none bg-slate-300 flex flex-col items-center justify-center">
-              <p className="font-light">COOK TIME</p>
-              <p className="font-thin">{detail.prep_time} mins</p>
+            <div className="w-[170px] h-[85px] border-none flex flex-col items-center justify-center">
+              <p className="font-light text-white">COOK TIME</p>
+              <p className="font-thin text-white">{detail.prep_time} mins</p>
             </div>
-            <div className="w-[170px] h-[85px] border-none bg-slate-300 flex flex-col items-center justify-center">
-              <p className="font-light">SERVES</p>
-              <p className="font-thin">{detail.serving} people</p>
+            <div className="w-[170px] h-[85px] border-none flex flex-col items-center justify-center">
+              <p className="font-light text-white">SERVES</p>
+              <p className="font-thin text-white">{detail.serving} people</p>
             </div>
           </div>
 
@@ -135,56 +131,41 @@ const Details = () => {
             <p className="text-body">{detail.author_note}</p>
           </div>
 
-          {Details.kitchen_note && (
+          {detail.kitchen_note && (
             <div className="mt-16">
               <h3 className="mb-6 text-regular font-semibold">KITCHEN NOTE</h3>
-              <p className="text-body">{detail.kitch_note}</p>
+              <p className="text-body">{detail.kitchen_note}</p>
             </div>
           )}
 
           <div className="mt-16">
-            <h3 className="text-regular font-semibold">Ingredients</h3>
-            <hr className="my-7 h-[2px] bg-slate-300" />
-            <ul className="font-semibold opacity-80 text-body">
-              <li className="mb-2">
-                2 pounds beef or veal; cheeks, chunk or foreshank
-              </li>
-              <li className="mb-2">2 yellow onions</li>
-              <li className="mb-2">2 yellow onions</li>
-              <li className="mb-2">2 yellow onions</li>
-            </ul>
+            <h3 className="text-regular font-semibold mb-5">Ingredients</h3>
+            <hr className="my-5" />
+            {ingredient.map((ing, index) => (
+              <div className="font-nunito flex gap-2 mb-5">
+                <h5>{ing.qty}</h5>
+                <h5>{ing.measurement}</h5>
+                <h5>{ing.name}</h5>
+              </div>
+            ))}
           </div>
 
           <div className="mt-16">
             <h3 className="text-regular font-semibold">Direction</h3>
-            <hr className="my-7 h-[2px] bg-slate-300" />
+            <hr className="my-7 h-[2px] bg-slate-300  " />
             <div className="opacity-80 text-body">
-              <div className="flex gap-5 mb-8">
-                <div className="border-2 rounded-full min-w-10 max-h-10 flex items-center justify-center">
-                  1
+              {direction.map((dir, index) => (
+                <div className="flex opacity-55 hover:bg-secondary p-3 gap-5 mb-8">
+                  <div className="border-2 rounded-full min-w-10 max-h-10 flex items-center justify-center">
+                    {index + 1}
+                  </div>
+                  <p className=" mt-2">{dir.step}</p>
                 </div>
-                <p className="font-semibold mt-2">
-                  Remove all tendons and fat from the meat. If the pieces are
-                  very large, cut them into smaller ones. Pat the meat dry, and
-                  then season. generously with salt and pepper and let it rest
-                  in the fridge for at least one hour, preferable overnight.
-                </p>
-              </div>
-              <div className="flex gap-5">
-                <div className="border-2 rounded-full min-w-10 max-h-10 flex items-center justify-center">
-                  1
-                </div>
-                <p className="font-semibold mt-2">
-                  Remove all tendons and fat from the meat. If the pieces are
-                  very large, cut them into smaller ones. Pat the meat dry, and
-                  then season. generously with salt and pepper and let it rest
-                  in the fridge for at least one hour, preferable overnight.
-                </p>
-              </div>
+              ))}
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-col gap-y-5 justify-center items-center mt-16 bg-slate-300 py-14">
+          <div className="flex flex-col md:flex-col gap-y-5 justify-center items-center mt-16 bg-navy-blue text-white py-14">
             <GoCommentDiscussion className="text-5xl" />
             <h3 className="text-sub-title font-merri font-bold opacity-70">
               See Reviews
@@ -214,8 +195,8 @@ const Details = () => {
                 alt="profile1"
               />
             </div>
-            <div className="border-2 border-slate-500 min-w-32 h-9 rounded-3xl flex justify-center items-center bg-white hover:bg-slate-200">
-              <i className="fa-regular fa-message me-2 text-slate-500"></i>
+            <div className="border-2 border-slate-500 min-w-32 h-9 rounded-3xl flex justify-center items-center">
+              <i className="fa-regular fa-message me-2 text-white"></i>
               <span className="font-light text-medium">REVIEW</span>
             </div>
           </div>
@@ -259,7 +240,7 @@ const Details = () => {
                 <button
                   id="dropdownDefaultButton"
                   data-dropdown-toggle="dropdown"
-                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  className="text-white bg-navy-blue focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                   type="button"
                 >
                   Order By{" "}

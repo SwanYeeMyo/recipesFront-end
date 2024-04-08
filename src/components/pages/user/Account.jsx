@@ -17,14 +17,11 @@ const Account = () => {
 
   const handleImage = (e) => {
     const file = e.target.files[0];
-    if (userData.image) {
-      setUserData((prevState) => ({
-        ...prevState,
-        image: file,
-      }));
-    }
+    setUserData((prevState) => ({
+      ...prevState,
+      image: file,
+    }));
   };
-
   const id = localStorage.getItem("id");
 
   useEffect(() => {
@@ -59,8 +56,11 @@ const Account = () => {
     formData.append("gender", userData.gender);
 
     formData.append("image", userData.image);
-
-    formData.append("type", "free");
+    if (userData.type == "premium") {
+      formData.append("type", "premium");
+    } else {
+      formData.append("type", "free");
+    }
     for (var pair of formData.entries()) {
       console.log(pair[0] + ", " + pair[1]);
     }
