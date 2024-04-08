@@ -4,31 +4,57 @@ import { FaInstagram } from "react-icons/fa";
 import { FaPinterestP } from "react-icons/fa";
 import { IoIosMail } from "react-icons/io";
 import { GoCommentDiscussion } from "react-icons/go";
-import { useParams } from "react-router-dom";
+import { Form, Link, useParams } from "react-router-dom";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from "react-responsive-carousel";
 import axios from "axios";
+import Comment from "../card/Comment";
 
 const Details = () => {
   const [detail, setDetail] = useState([]);
   const [direction, setDirections] = useState([]);
   const [ingredient, setIngredients] = useState([]);
   const [images, setImages] = useState([]);
+  const [reviews, setReviews] = useState([]);
 
   const { id } = useParams();
-  console.log(id);
-  useEffect(() => {
-    axios.get("http://127.0.0.1:8000/api/recipes/" + id).then((res) => {
-      // console.log(res.data);
-      setDetail(res.data.data);
-      // console.log(res.data.data["directions"]);
-      setDirections(res.data.data["directions"]);
-      setIngredients(res.data.data["ingredients"]);
-      setImages(res.data.data["images"]);
-      // console.log(res.data.data["ingredients"]);
-    });
-  }, []);
+  const user_id = localStorage.getItem("id");
 
+  const getData = () => {
+    axios
+      .get("http://127.0.0.1:8000/api/recipes/" + id + "/detail")
+      .then((res) => {
+        console.log(res.data.data);
+        setReviews(res.data.data.reviews);
+        setDetail(res.data.data);
+        // console.log(res.data.data["directions"]);
+        setDirections(res.data.data["directions"]);
+        setIngredients(res.data.data["ingredients"]);
+        setImages(res.data.data["images"]);
+        // console.log(res.data.data["ingredients"]);
+      });
+  };
+  useEffect(() => {
+    getData();
+  }, []);
+  const submitHandle = (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("comment", review);
+    formData.append("recipe_id", id);
+    formData.append("user_id", user_id);
+
+    axios
+      .post("http://127.0.0.1:8000/api/reviews", formData)
+      .then((res) => {
+        setReviews([...reviews, res.data]);
+      })
+      .catch((error) => console.error(error)); // Add error handling
+
+    for (var pair of formData.entries()) {
+      console.log(pair[0] + ", " + pair[1]);
+    }
+  };
   const [review, setReview] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   return (
@@ -142,7 +168,7 @@ const Details = () => {
             <h3 className="text-regular font-semibold mb-5">Ingredients</h3>
             <hr className="my-5" />
             {ingredient.map((ing, index) => (
-              <div className="font-nunito flex gap-2 mb-5">
+              <div key={index} className="font-nunito flex gap-2 mb-5">
                 <h5>{ing.qty}</h5>
                 <h5>{ing.measurement}</h5>
                 <h5>{ing.name}</h5>
@@ -155,7 +181,10 @@ const Details = () => {
             <hr className="my-7 h-[2px] bg-slate-300  " />
             <div className="opacity-80 text-body">
               {direction.map((dir, index) => (
-                <div className="flex opacity-55 hover:bg-secondary p-3 gap-5 mb-8">
+                <div
+                  key={index}
+                  className="flex opacity-55 hover:bg-secondary p-3 gap-5 mb-8"
+                >
                   <div className="border-2 rounded-full min-w-10 max-h-10 flex items-center justify-center">
                     {index + 1}
                   </div>
@@ -195,7 +224,7 @@ const Details = () => {
                 alt="profile1"
               />
             </div>
-            <div className="border-2 border-slate-500 min-w-32 h-9 rounded-3xl flex justify-center items-center">
+            <div className="border-2 border-slate-500 min-w-32 h-9 rounded-3xl flex justify-center items-center bg-white hover:bg-slate-200">
               <i className="fa-regular fa-message me-2 text-white"></i>
               <span className="font-light text-medium">REVIEW</span>
             </div>
@@ -219,21 +248,23 @@ const Details = () => {
                 value={review}
                 name="review"
                 onChange={(e) => setReview(e.target.value)}
-                onFocus={() => setIsFocused(true)}
-                onBlur={() => setIsFocused(false)}
-                rows={isFocused ? 5 : 1}
+                rows="5"
                 className="bg-slate-200 border border-gray-400 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full resize-none transition-all duration-1000 delay-75 ease-in-out overflow-hidden p-5 "
               />
-              {isFocused && (
-                <div className="text-right mt-2">
-                  <button
-                    onClick={() => console.log("Submit Review")}
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                  >
-                    Submit
-                  </button>
-                </div>
-              )}
+              <div className="text-right mt-2">
+                {user_id ? (
+                  review && (
+                    <button
+                      onClick={submitHandle}
+                      className="bg-navy-blue text-white font-bold py-2 px-4 rounded"
+                    >
+                      Submit
+                    </button>
+                  )
+                ) : (
+                  <Link to={"/login"}>Please login to create reviews</Link>
+                )}
+              </div>
             </div>
             <div>
               <div>
@@ -289,57 +320,9 @@ const Details = () => {
               </div>
             </div>
             <hr className="mb-10 mt-5 h-[2px] bg-slate-300" />
-            <div>
-              <div className="flex flex-col md:flex-row gap-10">
-                <div>
-                  <img
-                    src="https://www.tvtime.com/_next/image?url=https%3A%2F%2Fartworks.thetvdb.com%2Fbanners%2Fperson%2F7876166%2F632d4d70c17dc.jpg&w=640&q=75"
-                    className="rounded-full min-w-24 h-24 object-cover"
-                    alt=""
-                  />
-                </div>
-                <div>
-                  <div>
-                    <span className="me-5 font-semibold text-regular">
-                      Jenine
-                    </span>
-                    <span className="text-medium opacity-80">June 20,2024</span>
-                  </div>
-                  <p className="mt-4 font-light text-body">
-                    Hello! Does the recipe call for 4 inches of licorice root,
-                    or 4 ounces? It say inces, which could likely be either.
-                    Please clarify as I would love to give this a go. I am
-                    fortunate enough to have a lot of licorice growing on my
-                    property. Thanks!
-                  </p>
-                </div>
-              </div>
-              <hr className="my-10 h-[1px] bg-slate-300" />
-              <div className="flex flex-col md:flex-row gap-10">
-                <div>
-                  <img
-                    src="https://www.tvtime.com/_next/image?url=https%3A%2F%2Fartworks.thetvdb.com%2Fbanners%2Fperson%2F7876166%2F632d4d70c17dc.jpg&w=640&q=75"
-                    className="rounded-full min-w-24 h-24 object-cover"
-                    alt=""
-                  />
-                </div>
-                <div>
-                  <div>
-                    <span className="me-5 font-semibold text-regular">
-                      Jenine
-                    </span>
-                    <span className="text-medium opacity-80">June 20,2024</span>
-                  </div>
-                  <p className="mt-4 font-light text-body">
-                    Hello! Does the recipe call for 4 inches of licorice root,
-                    or 4 ounces? It say inces, which could likely be either.
-                    Please clarify as I would love to give this a go. I am
-                    fortunate enough to have a lot of licorice growing on my
-                    property. Thanks!
-                  </p>
-                </div>
-              </div>
-            </div>
+            {reviews.map((comment, index) => (
+              <Comment key={index} comment={comment} />
+            ))}
           </div>
         </div>
       </div>

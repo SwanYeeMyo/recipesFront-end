@@ -25,6 +25,7 @@ const Login = () => {
             localStorage.setItem("name", response.data.data.name);
             localStorage.setItem("id", response.data.data.id);
             localStorage.setItem("token", response.data.data.token);
+            localStorage.setItem("type", response.data.data.type);
             navigate("/recipes");
           }
         })
