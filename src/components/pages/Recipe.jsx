@@ -20,6 +20,7 @@ const Recipe = () => {
         const dishtypesResponse = await axios.get(
           "http://127.0.0.1:8000/api/dishTypes"
         );
+
         setData(response.data.data);
         setFilterData(response.data.data); // Initialize filterData with all recipes
         setDishtypes(dishtypesResponse.data.data);

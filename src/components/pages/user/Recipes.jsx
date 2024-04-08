@@ -11,6 +11,7 @@ const Recipes = () => {
   const [prepTime, setPrepTime] = useState("");
   const [images, setImages] = useState([]);
   const [dishTypes, setDistypes] = useState([]);
+  const [type, setType] = useState();
   const [selectedDishTypes, setSelectedDishTypes] = useState([]);
 
   const user_id = localStorage.getItem("id");
@@ -98,10 +99,12 @@ const Recipes = () => {
       formData.append("cook_time", parseInt(cookTime));
       formData.append("prep_time", parseInt(prepTime));
       formData.append("serving", parseInt(serving));
+      formData.append("type", type);
+
       formData.append("user_id", parseInt(user_id));
 
       selectedDishTypes.forEach((dishTypeId) => {
-        formData.append("types[]", parseInt(dishTypeId));
+        formData.append("dish_type[]", parseInt(dishTypeId));
       });
 
       ingredients.forEach((ingredient, index) => {
@@ -398,12 +401,13 @@ const Recipes = () => {
                   Select a type
                 </label>
                 <select
+                  name="type"
                   id="countries"
-                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  value={type}
+                  onChange={(e) => setType(e.target.value)}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 >
-                  <option value="free" selected>
-                    Free
-                  </option>
+                  <option value="free">Free</option>
                   <option value="premium">Premium</option>
                 </select>
               </div>

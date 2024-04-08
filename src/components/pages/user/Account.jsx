@@ -34,6 +34,7 @@ const Account = () => {
         try {
           const res = await axios.get("http://127.0.0.1:8000/api/users/" + id);
           setUserData(res.data.data);
+          console.log(res.data.data);
         } catch (error) {
           console.error("Error fetching user data:", error);
           toast.error("Failed to fetch user data");
@@ -54,7 +55,7 @@ const Account = () => {
     formData.append("name", userData.name);
     formData.append("email", userData.email);
     formData.append("gender", userData.gender);
-
+    formData.append("role_id", userData.roles[0].id);
     formData.append("image", userData.image);
     if (userData.type == "premium") {
       formData.append("type", "premium");
@@ -80,9 +81,9 @@ const Account = () => {
         setUserData(updatedUserData.data.data);
         navigate("/account");
         toast.success("User data updated successfully");
-        setTimeout(() => {
-          window.location.reload(); // Reload the page
-        }, 5000);
+        // setTimeout(() => {
+        //   window.location.reload(); // Reload the page
+        // }, 5000);
       })
       .catch((err) => {
         console.log(err);

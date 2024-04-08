@@ -2,10 +2,11 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const Card = ({ recipe }) => {
-  const { id, title, rating } = recipe;
+  const { id, title, rating, type } = recipe;
+  const subType = localStorage.getItem("type");
   return (
     <>
-      <div className="flex flex-col hover:bg-white hover:shadow hover:h-full hover:rounded-md ">
+      <div className=" relative  flex flex-col hover:bg-white hover:shadow hover:h-full hover:rounded-md ">
         <div className="overflow-hidden relative ">
           <img
             className="w-full max-h-[177px]  object-cover transition-transform duration-300 transform hover:scale-110"
@@ -33,12 +34,25 @@ const Card = ({ recipe }) => {
               </h5>
             </div>
           </div>
-          <Link
-            to={`/recipes/${id}`}
-            className="block  text-center text-sm w-[152px] p-2 bg-navy-blue text-white"
-          >
-            View
-          </Link>
+
+          <div className="">
+            <Link
+              to={`/recipes/${id}`}
+              className="block  text-center text-sm w-[152px] p-2 bg-navy-blue text-white"
+            >
+              View
+            </Link>
+            <button className="absolute top-1 p-2 right-2 rounded-full ">
+              {type === "premium" ? (
+                <i className=" text-yellow-300 fa-solid fa-lock"></i>
+              ) : // Check if subType is 'premium' to determine the lock icon
+              subType === "premium" ? (
+                <i className="text-yellow-300 fa-solid fa-lock"></i>
+              ) : (
+                <i className="text-yellow-300 fa-solid fa-lock-open"></i>
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </>
