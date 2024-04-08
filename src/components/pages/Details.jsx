@@ -47,7 +47,9 @@ const Details = () => {
     axios
       .post("http://127.0.0.1:8000/api/reviews", formData)
       .then((res) => {
-        setReviews([...reviews, res.data]);
+        // Refetch comments data from the server
+        getData();
+        setReview(""); // Clear the review input after successful submission
       })
       .catch((error) => console.error(error)); // Add error handling
 
@@ -55,6 +57,7 @@ const Details = () => {
       console.log(pair[0] + ", " + pair[1]);
     }
   };
+
   const [review, setReview] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   return (
@@ -320,8 +323,31 @@ const Details = () => {
               </div>
             </div>
             <hr className="mb-10 mt-5 h-[2px] bg-slate-300" />
-            {reviews.map((comment, index) => (
-              <Comment key={index} comment={comment} />
+            {reviews.map((review, index) => (
+              <div className="flex flex-col md:flex-row gap-10 mb-4">
+                <div>
+                  <img
+                    src="https://www.tvtime.com/_next/image?url=https%3A%2F%2Fartworks.thetvdb.com%2Fbanners%2Fperson%2F7876166%2F632d4d70c17dc.jpg&w=640&q=75"
+                    className="rounded-full min-w-24 h-24 object-cover"
+                    alt=""
+                  />
+                </div>
+                <div>
+                  <div>
+                    <span className="me-5 font-semibold text-regular">
+                      {review.user?.name || "Unknown User"}
+                    </span>
+                    <span className="text-medium opacity-80">
+                      {new Date(review.created_at).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </span>
+                  </div>
+                  <p className="mt-4 font-light text-body">{review.comment}</p>
+                </div>
+              </div>
             ))}
           </div>
         </div>
