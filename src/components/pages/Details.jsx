@@ -11,21 +11,21 @@ const Details = () => {
 	const [isFocused, setIsFocused] = useState(false);
 	return (
 		<>
-			<div class="container mx-auto mt-32 font-nunito">
-				<h2 class="text-2xl mb-5 md:mb-8 md:text-section font-merri text-center text-navy-blue">
+			<div className="container mx-auto mt-32 font-nunito">
+				<h2 className="text-2xl mb-5 md:mb-8 md:text-section font-merri text-center text-navy-blue">
 					Licorice Root and Malt Beer Beef Stew
 				</h2>
-				<p class="italic font-extralight text-center text-sm">
+				<p className="italic font-extralight text-center text-sm">
 					by: METTCH | February 3, 2010
 				</p>
-				<div class="text-medium font-extralight flex flex-col md:flex-row gap-2 justify-center mt-5">
+				<div className="text-medium font-extralight flex flex-col md:flex-row gap-2 justify-center mt-5">
 					<div>
-						<span class="me-1">4</span>
-						<i class="text-yellow-300 fa-solid fa-star me-1"></i>
-						<i class="text-yellow-300 fa-solid fa-star me-1"></i>
-						<i class="text-yellow-300 fa-solid fa-star me-1"></i>
-						<i class="text-yellow-300 fa-solid fa-star me-1"></i>
-						<i class="text-yellow-300 fa-solid fa-star me-1"></i>
+						<span className="me-1">4</span>
+						<i className="text-yellow-300 fa-solid fa-star me-1"></i>
+						<i className="text-yellow-300 fa-solid fa-star me-1"></i>
+						<i className="text-yellow-300 fa-solid fa-star me-1"></i>
+						<i className="text-yellow-300 fa-solid fa-star me-1"></i>
+						<i className="text-yellow-300 fa-solid fa-star me-1"></i>
 					</div>
 					<div>
 						<p>6 Ratings</p>
@@ -34,55 +34,55 @@ const Details = () => {
 						<p>View 15 Reviews</p>
 					</div>
 				</div>
-				<div class="flex gap-3 justify-center mt-5">
-					<div class="font-bold text-gray-700 rounded-full border-2 w-10 h-10 border-slate-300 bg-white flex items-center justify-center font-mono">
-						<FaFacebookF class="text-2xl text-blue-700" />
+				<div className="flex gap-3 justify-center mt-5">
+					<div className="font-bold text-gray-700 rounded-full border-2 w-10 h-10 border-slate-300 bg-white flex items-center justify-center font-mono">
+						<FaFacebookF className="text-2xl text-blue-700" />
 					</div>
-					<div class="font-bold text-gray-700 rounded-full border-2 w-10 h-10 border-slate-300 bg-white flex items-center justify-center font-mono">
-						<FaInstagram class="text-2xl text-rose-500" />
+					<div className="font-bold text-gray-700 rounded-full border-2 w-10 h-10 border-slate-300 bg-white flex items-center justify-center font-mono">
+						<FaInstagram className="text-2xl text-rose-500" />
 					</div>
-					<div class="font-bold text-gray-700 rounded-full border-2 w-10 h-10 border-slate-300 bg-white flex items-center justify-center font-mono">
-						<FaPinterestP class="text-2xl text-red-600" />
+					<div className="font-bold text-gray-700 rounded-full border-2 w-10 h-10 border-slate-300 bg-white flex items-center justify-center font-mono">
+						<FaPinterestP className="text-2xl text-red-600" />
 					</div>
-					<div class="font-bold text-gray-700 rounded-full border-2 w-10 h-10 border-slate-300 bg-white flex items-center justify-center font-mono">
-						<IoIosMail class="text-2xl text-slate-600" />
+					<div className="font-bold text-gray-700 rounded-full border-2 w-10 h-10 border-slate-300 bg-white flex items-center justify-center font-mono">
+						<IoIosMail className="text-2xl text-slate-600" />
 					</div>
 				</div>
 
-				<div class="mt-16">
+				<div className="mt-16">
 					<div
 						id="default-carousel"
-						class="relative w-full z-0"
+						className="relative w-full z-0"
 						data-carousel="slide"
 					>
-						<div class="relative overflow-hidden rounded-lg h-[644px]">
+						<div className="relative overflow-hidden rounded-lg h-[644px]">
 							<div
-								class="hidden duration-700 ease-in-out w-full max-h-[644px] object-cover"
+								className="hidden duration-700 ease-in-out w-full max-h-[644px] object-cover"
 								data-carousel-item
 							>
 								<img
 									src="https://images.unsplash.com/photo-1626263468007-a9e0cf83f1ac?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGNob2NvbGF0ZSUyMGNha2V8ZW58MHx8MHx8fDA%3D"
-									class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
+									className="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
 									alt="..."
 								/>
 							</div>
 							<div
-								class="hidden duration-700 ease-in-out w-full max-h-[644px] object-cover"
+								className="hidden duration-700 ease-in-out w-full max-h-[644px] object-cover"
 								data-carousel-item
 							>
 								<img
 									src="https://images.unsplash.com/photo-1626263468007-a9e0cf83f1ac?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGNob2NvbGF0ZSUyMGNha2V8ZW58MHx8MHx8fDA%3D"
-									class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
+									className="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
 									alt="..."
 								/>
 							</div>
 							<div
-								class="hidden duration-700 ease-in-out w-full max-h-[644px] object-cover"
+								className="hidden duration-700 ease-in-out w-full max-h-[644px] object-cover"
 								data-carousel-item
 							>
 								<img
 									src="https://images.unsplash.com/photo-1626263468007-a9e0cf83f1ac?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGNob2NvbGF0ZSUyMGNha2V8ZW58MHx8MHx8fDA%3D"
-									class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
+									className="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
 									alt="..."
 								/>
 							</div>
