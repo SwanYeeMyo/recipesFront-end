@@ -20,25 +20,7 @@ const EditUser = () => {
 		type: "",
 		role_id: "",
 	});
-
-	const handleImage = (e) => {
-		const file = e.target.files[0];
-		setUserData((prevState) => ({
-			...prevState,
-			image: file,
-		}));
-	};
 	const { id } = useParams();
-
-	const handleChange = (e) => {
-		// Update the userData state with the new type selected by the user
-		const { name, value } = e.target;
-		setUserData((prevState) => ({
-			...prevState,
-			[name]: value,
-		}));
-	};
-
 	useEffect(() => {
 		const fetchUserData = async () => {
 			const token = localStorage.getItem("token");
@@ -68,9 +50,6 @@ const EditUser = () => {
 		formData.append("email", userData.email);
 		formData.append("gender", userData.gender);
 		formData.append("role_id", userData.roles?.[0]?.id);
-		if (userData.image) {
-			formData.append("image", userData.image);
-		}
 		if (userData.type == "premium") {
 			formData.append("type", "premium");
 		} else {
@@ -93,11 +72,7 @@ const EditUser = () => {
 					"http://127.0.0.1:8000/api/users/" + id
 				);
 				setUserData(updatedUserData.data.data);
-				navigate("/users");
 				toast.success("User data updated successfully");
-				// setTimeout(() => {
-				// 	window.location.reload(); // Reload the page
-				// }, 5000);
 			})
 			.catch((err) => {
 				if (err.response) {
@@ -178,24 +153,6 @@ const EditUser = () => {
 								</div>
 								<div className="mb-2">
 									<label
-										htmlFor="text"
-										className="block mb-2 text-left text-sm font-medium text-gray-900 "
-									>
-										Image
-									</label>
-									<input
-										className="border w-full shadow-sm bg-gray-50 rounded-lg border-gray-300"
-										type="file"
-										onChange={handleImage}
-										name="image"
-									/>
-									{error.image && (
-										<p className="mt-1 text-sm text-red-500">{error.image}</p>
-									)}
-								</div>
-
-								<div className="mb-2">
-									<label
 										htmlFor="email"
 										className="block mb-2 text-left text-sm font-medium text-gray-900 "
 									>
@@ -228,12 +185,48 @@ const EditUser = () => {
 										id="type"
 										name="type"
 										value={userData.type}
-										onChange={handleChange}
+										onChange={(e) =>
+											setUserData({ ...userData, type: e.target.value })
+										}
 										className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
 									>
 										<option disabled>Choose type</option>
 										<option value="free">Free</option>
 										<option value="premium">Premium</option>
+									</select>
+								</div>
+								<div className="mb-2">
+									<label
+										htmlFor="text"
+										className="block mb-2 text-left text-sm font-medium text-gray-900 "
+									>
+										Role
+									</label>
+									<select
+										id="role_id"
+										name="role_id"
+										value={userData.roles?.[0]?.id}
+										onChange={
+											(e) => {
+												const updatedRoles = userData.roles.map((role, index) =>
+													index === 0 ? { ...role, id: e.target.value } : role
+												);
+
+												// Update the userData state with this new roles array
+												setUserData({
+													...userData,
+													roles: updatedRoles,
+												});
+
+												console.log(userData);
+											}
+											// console.log(userData.roles?.[0]?.id)
+										}
+										className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+									>
+										<option disabled>Choose role</option>
+										<option value="2">Admin</option>
+										<option value="3">User</option>
 									</select>
 								</div>
 								<div className="mb-2">

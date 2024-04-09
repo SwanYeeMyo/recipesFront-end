@@ -14,6 +14,9 @@ import Recipes from "./components/pages/user/Recipes";
 import Account from "./components/pages/user/Account";
 import Users from "./components/pages/Users";
 import EditUser from "./components/pages/EditUser";
+import DishTypes from "./components/pages/DishTypes/DishTypes";
+import CreateDishType from "./components/pages/DishTypes/CreateDishType";
+import EditDishType from "./components/pages/DishTypes/EditDishType";
 function App() {
 	return (
 		<BrowserRouter>
@@ -32,6 +35,7 @@ function AppContent() {
 		"/account/recipes/edit",
 		"/account/profile",
 		"/users",
+		"/dishtypes",
 	];
 
 	// Check if the current route is one of the excluded routes
@@ -62,6 +66,9 @@ function AppContent() {
 						<Route path="/account" element={<Account />} />
 						<Route path="/users" element={<Users />} />
 						<Route path="/users/:id" element={<EditUser />} />
+						<Route path="/dishtypes" element={<DishTypes />} />
+						<Route path="/dishtypes/create" element={<CreateDishType />} />
+						<Route path="/dishtypes/:id" element={<EditDishType />} />
 					</>
 				)}
 				{localStorage.getItem("type") !== "free" && (
