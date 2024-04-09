@@ -14,6 +14,9 @@ import Recipes from "./components/pages/user/Recipes";
 import Account from "./components/pages/user/Account";
 import Users from "./components/pages/Users";
 import EditUser from "./components/pages/EditUser";
+import DishTypes from "./components/pages/DishTypes/DishTypes";
+import CreateDishType from "./components/pages/DishTypes/CreateDishType";
+import EditDishType from "./components/pages/DishTypes/EditDishType";
 import Details from "./components/pages/Details";
 function App() {
 	return (
@@ -33,6 +36,7 @@ function AppContent() {
 		"/account/recipes/edit",
 		"/account/profile",
 		"/users",
+		"/dishtypes",
 	];
 
 	// Check if the current route is one of the excluded routes
@@ -63,13 +67,16 @@ function AppContent() {
 						<Route path="/account" element={<Account />} />
 						<Route path="/users" element={<Users />} />
 						<Route path="/users/:id" element={<EditUser />} />
+						<Route path="/dishtypes" element={<DishTypes />} />
+						<Route path="/dishtypes/create" element={<CreateDishType />} />
+						<Route path="/dishtypes/:id" element={<EditDishType />} />
 					</>
 				)}
 				{localStorage.getItem("type") !== "free" && (
 					<Route path="/account/recipes" element={<Recipes />} />
 				)}
 				<Route path="/account/profile" element={<Account />}></Route>
-        <Route path="/recipes/:id" element={<Details />}></Route>
+				<Route path="/recipes/:id" element={<Details />}></Route>
 			</Routes>
 			{!isExcludedRoute && <Footer />}
 		</>
