@@ -17,6 +17,7 @@ import EditUser from "./components/pages/EditUser";
 import DishTypes from "./components/pages/DishTypes/DishTypes";
 import CreateDishType from "./components/pages/DishTypes/CreateDishType";
 import EditDishType from "./components/pages/DishTypes/EditDishType";
+import Details from "./components/pages/Details";
 function App() {
 	return (
 		<BrowserRouter>
@@ -75,6 +76,7 @@ function AppContent() {
 					<Route path="/account/recipes" element={<Recipes />} />
 				)}
 				<Route path="/account/profile" element={<Account />}></Route>
+				<Route path="/recipes/:id" element={<Details />}></Route>
 			</Routes>
 			{!isExcludedRoute && <Footer />}
 		</>

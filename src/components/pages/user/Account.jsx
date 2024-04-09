@@ -12,10 +12,16 @@ const Account = () => {
     email: "",
     gender: "",
     type: "",
-    image: null,
     role_id: "",
   });
 
+  const handleImage = (e) => {
+    const file = e.target.files[0];
+    setUserData((prevState) => ({
+      ...prevState,
+      image: file,
+    }));
+  };
   const id = localStorage.getItem("id");
 
   useEffect(() => {
@@ -28,7 +34,6 @@ const Account = () => {
         try {
           const res = await axios.get("http://127.0.0.1:8000/api/users/" + id);
           setUserData(res.data.data);
-          toast.success("User data fetched successfully");
         } catch (error) {
           console.error("Error fetching user data:", error);
           toast.error("Failed to fetch user data");
@@ -41,33 +46,69 @@ const Account = () => {
 
     fetchUserData();
   }, [id]);
-
+  console.log("http://127.0.0.1:8000/storage/user/" + userData.image);
+  // console.log(userData.image);
   const updateHandler = (e) => {
     e.preventDefault();
+    const formData = new FormData();
+    formData.append("name", userData.name);
+    formData.append("email", userData.email);
+    formData.append("gender", userData.gender);
+
+    formData.append("image", userData.image);
+    if (userData.type == "premium") {
+      formData.append("type", "premium");
+    } else {
+      formData.append("type", "free");
+    }
+    for (var pair of formData.entries()) {
+      console.log(pair[0] + ", " + pair[1]);
+    }
     axios
-      .post("http://127.0.0.1:8000/api/users/" + id + "/update/", userData)
-      .then((res) => {
+      .post(`http://127.0.0.1:8000/api/users/${id}/update/`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then(async (res) => {
         console.log(res);
         localStorage.setItem("user", res.data.data.name);
-        navigate("/");
+        // After successful update, fetch the updated user data
+        const updatedUserData = await axios.get(
+          "http://127.0.0.1:8000/api/users/" + id
+        );
+        setUserData(updatedUserData.data.data);
+        navigate("/account");
         toast.success("User data updated successfully");
+        setTimeout(() => {
+          window.location.reload(); // Reload the page
+        }, 5000);
       })
       .catch((err) => {
         console.log(err);
         toast.error("Failed to update user data");
       });
   };
+
   return (
     <>
       {/* <NavSideBar /> */}
-      <div class="p-4 sm:ml-64">
+      <div className="p-4 sm:ml-64">
         <ToastContainer />
-        <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
-          <div class="grid grid-cols-2 gap-4 mb-4">
-            <div class="">
+        <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="">
               <div className="shadow p-5">
                 {userData.image ? (
-                  <h5>Image</h5>
+                  <div className="max-w-lg mx-auto">
+                    <img
+                      src={
+                        "http://127.0.0.1:8000/storage/user/" + userData.image
+                      } // Make sure userData.image contains the correct file name
+                      className="mx-auto rounded-lg w-full"
+                      alt=""
+                    />
+                  </div>
                 ) : (
                   <div className="max-w-lg mx-auto">
                     <img
@@ -79,7 +120,7 @@ const Account = () => {
                 )}
               </div>
             </div>
-            <div class="">
+            <div className="">
               <form
                 onSubmit={updateHandler}
                 className="p-3 shadow bg-white rounded-md mx-auto"
@@ -113,26 +154,20 @@ const Account = () => {
                     placeholder="name@flowbite.com"
                   />
                 </div>
-                {/* <div className="mb-2">
+                <div className="mb-2">
                   <label
                     htmlFor="text"
                     className="block mb-2 text-left text-sm font-medium text-gray-900 "
                   >
-                    Your name
+                    Update Image
                   </label>
                   <input
-                    type="text"
-                    value={userData.role_id}
-                    onChange={(e) =>
-                      setUserData({ ...userData, name: e.target.value })
-                    }
-                    name="name"
-                    id="text"
-                    className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-                    placeholder="name@flowbite.com"
-                    required
+                    className="border w-full shadow-sm bg-gray-50 rounded-lg border-gray-300"
+                    type="file"
+                    onChange={handleImage}
+                    name="image"
                   />
-                </div> */}
+                </div>
 
                 <div className="mb-2">
                   <label
