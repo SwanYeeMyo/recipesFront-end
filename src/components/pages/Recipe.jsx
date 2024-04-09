@@ -12,8 +12,20 @@ const Recipe = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState();
-
+  let subType = "";
   useEffect(() => {
+    // Check if the type is already stored in local storage
+    if (localStorage.getItem("type")) {
+      subType = localStorage.getItem("type");
+      console.log(localStorage.getItem("type"));
+    } else if (localStorage.getItem("type")) {
+      // If not, set it to "free" by default
+      localStorage.setItem("type", "free");
+    }
+
+    // Retrieve the stored type
+    subType = localStorage.getItem("type");
+
     const fetchData = async () => {
       try {
         const response = await axios.get("http://127.0.0.1:8000/api/recipes");
@@ -24,7 +36,7 @@ const Recipe = () => {
         setFilterData(response.data.data); // Initialize filterData with all recipes
         setDishtypes(dishtypesResponse.data.data);
         console.log(response.data.data);
-        console.log(dishtypesResponse.data.data);
+        // console.log(dishtypesResponse.data.data);
         setTotalPages(Math.ceil(response.data.data.length / perPage));
         setLoading(false);
       } catch (error) {
@@ -111,43 +123,42 @@ const Recipe = () => {
                   </div>
                 ))}
               </div>
-              {totalPages > 1 && currentRecipes.length === 6 && (
-                <nav className="flex justify-end items-center gap-x-1">
-                  <button
-                    type="button"
-                    onClick={() => paginate(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className="min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-1.5 text-sm rounded-lg text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10"
-                  >
-                    <span>Previous</span>
-                  </button>
-                  <div className="flex items-center gap-x-1">
-                    {Array.from({ length: totalPages }, (_, i) => (
-                      <button
-                        key={i}
-                        type="button"
-                        onClick={() => paginate(i + 1)}
-                        className={`min-h-[38px] min-w-[38px] flex justify-center items-center ${
-                          currentPage === i + 1
-                            ? "bg-navy-blue text-white"
-                            : "text-gray-800 hover:bg-gray-100"
-                        } py-2 px-3 text-sm rounded-lg focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none `}
-                        aria-current={currentPage === i + 1 ? "page" : null}
-                      >
-                        {i + 1}
-                      </button>
-                    ))}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => paginate(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    className="min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-1.5 text-sm rounded-lg text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10"
-                  >
-                    <span>Next</span>
-                  </button>
-                </nav>
-              )}
+
+              <nav className="flex justify-end items-center gap-x-1">
+                <button
+                  type="button"
+                  onClick={() => paginate(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-1.5 text-sm rounded-lg text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10"
+                >
+                  <span>Previous</span>
+                </button>
+                <div className="flex items-center gap-x-1">
+                  {Array.from({ length: totalPages }, (_, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => paginate(i + 1)}
+                      className={`min-h-[38px] min-w-[38px] flex justify-center items-center ${
+                        currentPage === i + 1
+                          ? "bg-navy-blue text-white"
+                          : "text-gray-800 hover:bg-gray-100"
+                      } py-2 px-3 text-sm rounded-lg focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none `}
+                      aria-current={currentPage === i + 1 ? "page" : null}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => paginate(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-1.5 text-sm rounded-lg text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10"
+                >
+                  <span>Next</span>
+                </button>
+              </nav>
             </div>
           </div>
         </div>
