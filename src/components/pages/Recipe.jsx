@@ -94,7 +94,7 @@ const Recipe = () => {
       ) : error ? (
         <div>Error: {error}</div>
       ) : (
-        <div className="container  mx-auto mt-24">
+        <div className="max-w-6xl  mx-auto mt-24">
           <div className="grid grid-cols-12 gap-2">
             <div className=" col-span-12 md:col-span-3   ">
               <div className="w-full rounded shadow-sm h-[600px]">

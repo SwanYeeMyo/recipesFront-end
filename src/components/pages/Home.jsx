@@ -4,31 +4,44 @@ import Card from "../card/Card";
 import Button from "../button/Button";
 import { foods } from "../../food";
 import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
+import { Carousel } from "react-responsive-carousel";
+import { people } from "../../people";
 
 const Home = () => {
   const [data, setData] = useState([]);
   const [filterData, setFilterData] = useState([]);
-  const [meal, setMeal] = useState([]);
-  const [vegan, setVegan] = useState([]);
-  const [soup, setSoup] = useState([]);
-  console.log(vegan);
-  useEffect(() => {
-    axios
-      .get("http://127.0.0.1:8000/api/recipes")
-      .then((res) => {
-        const veganRecipes = res.data.data
-          .filter(
-            (recipe) => recipe.dishType === "breakfast" // Assuming "vegan" is one of the dish types
-          )
-          .slice(0, 4);
+  const [Meal, setMeal] = useState([]);
+  const [Vegan, setVegan] = useState([]);
+  const [Soup, setSoup] = useState([]);
+  const [searchData, setSearchData] = useState("");
+  const navigate = useNavigate();
 
-        setVegan(veganRecipes);
+  useEffect(() => {
+    const request1 = axios.get("http://127.0.0.1:8000/api/recipes/vegan");
+    const request2 = axios.get("http://127.0.0.1:8000/api/recipes/meal");
+    const request3 = axios.get("http://127.0.0.1:8000/api/recipes/soup");
+    Promise.all([request1, request2, request3])
+      .then(([response1, response2, response3]) => {
+        // Handle responses here
+
+        setVegan(response1.data.data);
+        setMeal(response2.data.data);
+        setSoup(response3.data.data);
+
+        // Further processing or state updates with the data
       })
       .catch((error) => {
         console.error("Error fetching recipes:", error);
         // Handle errors gracefully, e.g., display an error message to the user
       });
   }, []);
+
+  const submitHandler = (e) => {
+    e.preventDefault();
+    console.log(searchData);
+    navigate(`/recipes/search/${searchData}`);
+  };
 
   return (
     <>
@@ -38,26 +51,36 @@ const Home = () => {
             Recipes
           </h1>
           <div className="font-nunito flex items-center justify-center gap-1 ">
-            <input
-              type="text"
-              className="w-[800px] p-4 hover:border-black focus:ring-black"
-              placeholder="Please Recipes and more"
-            />
-            <button type="button" className="bg-navy-blue text-white p-4 ">
-              Search
-            </button>
+            <form onSubmit={submitHandler}>
+              <input
+                type="text"
+                className="w-[800px] p-4 hover:border-black focus:ring-black"
+                placeholder="Please Recipes and more"
+                value={searchData}
+                name="searchData"
+                onChange={(e) => setSearchData(e.target.value)}
+              />
+              {searchData && (
+                <button
+                  type="submit"
+                  className="mx-1 bg-navy-blue text-white p-4 "
+                >
+                  Search
+                </button>
+              )}
+            </form>
           </div>
           <div className="max-w-3xl mt-5 mx-auto">
             <div className="mt-10 md:grid md:grid-cols-4 flex justify-center items-center gap-3">
               {foods.map((food, i) => (
                 <div key={i} className="col-span-1 text-center">
-                  <a href="">
+                  <Link to={`/recipes/search/${food.name}`}>
                     <img
                       src={food.img}
                       className=" mx-auto  object-cover rounded-full  w-[90px] h-[90px] md:w-[122px] md:h-[122px]"
                       alt=""
                     />
-                  </a>
+                  </Link>
                   <h5 className=" font-nunito text-base md:text-regular ">
                     {food.name}
                   </h5>
@@ -107,27 +130,24 @@ const Home = () => {
                 <span className="font-small font-nunito">
                   From cutlets to stews, we've got oh-so many options.
                 </span>
-                <a className="text-classic" href="">
+                <Link
+                  to={`/recipes/search/${"meal"}`}
+                  className="text-classic"
+                  href=""
+                >
                   View All
-                </a>
+                </Link>
               </div>
             </div>
             <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-2">
-              {vegan.map((d, i) => (
-                <div className="col-span-1">
-                  <Card recipe={d} />
+              {Meal.map((recipe, index) => (
+                <div key={index} className="col-span-1">
+                  <Card
+                    image={recipe.images.length > 0 ? recipe.images[1] : null}
+                    recipe={recipe}
+                  />
                 </div>
               ))}
-
-              {/* <div className="col-span-1">
-                <Card />
-              </div>
-              <div className="col-span-1">
-                <Card />
-              </div>
-              <div className="col-span-1">
-                <Card />
-              </div> */}
             </div>
           </div>
         </div>
@@ -143,25 +163,25 @@ const Home = () => {
                 <span className="font-small font-nunito">
                   From cutlets to stews, we've got oh-so many options.
                 </span>
-                <a className="text-classic" href="">
+                <Link
+                  to={`/recipes/search/${"vegan"}`}
+                  className="text-classic"
+                  href=""
+                >
                   View All
-                </a>
+                </Link>
               </div>
             </div>
-            {/* <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-2">
-              <div className="col-span-1">
-                <Card />
-              </div>
-              <div className="col-span-1">
-                <Card />
-              </div>
-              <div className="col-span-1">
-                <Card />
-              </div>
-              <div className="col-span-1">
-                <Card />
-              </div>
-            </div> */}
+            <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-2">
+              {Vegan.map((recipe, index) => (
+                <div key={index} className="col-span-1">
+                  <Card
+                    image={recipe.images.length > 0 ? recipe.images[1] : null}
+                    recipe={recipe}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -206,170 +226,25 @@ const Home = () => {
                 <span className="font-small font-nunito">
                   From cutlets to stews, we've got oh-so many options.
                 </span>
-                <a className="text-classic" href="">
+                <Link
+                  to={`/recipes/search/${"soup"}`}
+                  className="text-classic"
+                  href=""
+                >
                   View All
-                </a>
+                </Link>
               </div>
             </div>
-            {/* <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-2">
-              <div className="col-span-1">
-                <Card />
-              </div>
-              <div className="col-span-1">
-                <Card />
-              </div>
-              <div className="col-span-1">
-                <Card />
-              </div>
-              <div className="col-span-1">
-                <Card />
-              </div>
-            </div> */}
-          </div>
-        </div>
-        <div>
-          <div
-            id="default-carousel"
-            className="relative w-full"
-            data-carousel="slide"
-          >
-            <div className="relative h-56 overflow-hidden rounded-lg md:h-96">
-              <div
-                className="hidden duration-700 ease-in-out"
-                data-carousel-item
-              >
-                <img
-                  src="/docs/images/carousel/carousel-1.svg"
-                  className="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
-                  alt="..."
-                />
-              </div>
-              <div
-                className="hidden duration-700 ease-in-out"
-                data-carousel-item
-              >
-                <img
-                  src="/docs/images/carousel/carousel-2.svg"
-                  className="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
-                  alt="..."
-                />
-              </div>
-              <div
-                className="hidden duration-700 ease-in-out"
-                data-carousel-item
-              >
-                <img
-                  src="/docs/images/carousel/carousel-3.svg"
-                  className="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
-                  alt="..."
-                />
-              </div>
-              <div
-                className="hidden duration-700 ease-in-out"
-                data-carousel-item
-              >
-                <img
-                  src="/docs/images/carousel/carousel-4.svg"
-                  className="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
-                  alt="..."
-                />
-              </div>
-              <div
-                className="hidden duration-700 ease-in-out"
-                data-carousel-item
-              >
-                <img
-                  src="/docs/images/carousel/carousel-5.svg"
-                  className="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
-                  alt="..."
-                />
-              </div>
-            </div>
-            <div className="absolute z-30 flex -translate-x-1/2 bottom-5 left-1/2 space-x-3 rtl:space-x-reverse">
-              <button
-                type="button"
-                className="w-3 h-3 rounded-full"
-                aria-current="true"
-                aria-label="Slide 1"
-                data-carousel-slide-to="0"
-              ></button>
-              <button
-                type="button"
-                className="w-3 h-3 rounded-full"
-                aria-current="false"
-                aria-label="Slide 2"
-                data-carousel-slide-to="1"
-              ></button>
-              <button
-                type="button"
-                className="w-3 h-3 rounded-full"
-                aria-current="false"
-                aria-label="Slide 3"
-                data-carousel-slide-to="2"
-              ></button>
-              <button
-                type="button"
-                className="w-3 h-3 rounded-full"
-                aria-current="false"
-                aria-label="Slide 4"
-                data-carousel-slide-to="3"
-              ></button>
-              <button
-                type="button"
-                className="w-3 h-3 rounded-full"
-                aria-current="false"
-                aria-label="Slide 5"
-                data-carousel-slide-to="4"
-              ></button>
-            </div>
-            <button
-              type="button"
-              className="absolute top-0 start-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
-              data-carousel-prev
-            >
-              <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
-                <svg
-                  className="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 6 10"
-                >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M5 1 1 5l4 4"
+            <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-2">
+              {Soup.map((recipe, index) => (
+                <div key={index} className="col-span-1">
+                  <Card
+                    image={recipe.images.length > 0 ? recipe.images[1] : null}
+                    recipe={recipe}
                   />
-                </svg>
-                <span className="sr-only">Previous</span>
-              </span>
-            </button>
-            <button
-              type="button"
-              className="absolute top-0 end-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
-              data-carousel-next
-            >
-              <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
-                <svg
-                  className="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 6 10"
-                >
-                  <path
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="m1 9 4-4-4-4"
-                  />
-                </svg>
-                <span className="sr-only">Next</span>
-              </span>
-            </button>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>

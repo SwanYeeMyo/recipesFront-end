@@ -78,7 +78,7 @@ const Login = () => {
             </span>
             <div className="my-5">
               <button className="w-full p-4 rounded-md bg-navy-blue text-white uppercase">
-                Submit
+                Login
               </button>
             </div>
           </form>

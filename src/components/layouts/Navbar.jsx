@@ -53,9 +53,9 @@ const Navbar = () => {
                   </Link>
                   <Link
                     className="block font-medium text-gray-600 hover:text-classic dark:text-classic dark:hover:text-gray-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-                    to={"signup"}
+                    to={"/signup"}
                   >
-                    SignUp
+                    Register
                   </Link>
                 </>
               ) : null}
@@ -161,9 +161,9 @@ const Navbar = () => {
                     </Link>
                     <Link
                       className="block font-medium text-gray-600 hover:text-classic dark:text-classic dark:hover:text-gray-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-                      to={"signup"}
+                      to={"/signup"}
                     >
-                      SignUp
+                      Register
                     </Link>
                   </>
                 ) : null}
