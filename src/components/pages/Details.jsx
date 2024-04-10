@@ -16,10 +16,13 @@ const Details = () => {
   const [ingredient, setIngredients] = useState([]);
   const [images, setImages] = useState([]);
   const [reviews, setReviews] = useState([]);
-
+  const [userData, setUserData] = useState([]);
+  const [userType, setUserType] = useState(
+    localStorage.getItem("type") || "free"
+  );
+  const [recipeType, setRecipeType] = useState("");
   const { id } = useParams();
   const user_id = localStorage.getItem("id");
-
   const getData = () => {
     axios
       .get("http://127.0.0.1:8000/api/recipes/" + id + "/detail")
@@ -27,6 +30,11 @@ const Details = () => {
         console.log(res.data.data);
         setReviews(res.data.data.reviews);
         setDetail(res.data.data);
+        setUserData(res.data.data.user);
+
+        // Ensure user type is set or default to empty string
+        setRecipeType(res.data.data.type);
+
         // console.log(res.data.data["directions"]);
         setDirections(res.data.data["directions"]);
         setIngredients(res.data.data["ingredients"]);
@@ -67,7 +75,7 @@ const Details = () => {
           {detail.title}
         </h2>
         <p className="italic font-extralight text-center text-sm">
-          by: METTCH | {detail.creeated_at}
+          by: {userData.name}|| {detail.creeated_at}
         </p>
         <div className="text-medium font-extralight flex flex-col md:flex-row gap-2 justify-center mt-5">
           <div>
@@ -82,7 +90,7 @@ const Details = () => {
             <p>6 Ratings</p>
           </div>
           <div>
-            <p>View 15 Reviews</p>
+            <p>View {reviews.length} Reviews</p>
           </div>
         </div>
         <div className="flex gap-3 mb-5 justify-center mt-5">
@@ -100,16 +108,32 @@ const Details = () => {
           </div>
         </div>
 
-        <Carousel>
-          {images.map((img, index) => (
-            <div key={index}>
-              <img
-                className="object-cover max-h-[644px] "
-                src={"http://127.0.0.1:8000/recipe_img/" + img.name}
-              />
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-12 gap-5">
+            <div className="col-span-8">
+              <Carousel>
+                {images.slice(1).map((img, index) => (
+                  <div key={index}>
+                    <img
+                      className="object-cover max-h-[644px]"
+                      src={"http://127.0.0.1:8000/recipe_img/" + img.name}
+                    />
+                  </div>
+                ))}
+              </Carousel>
             </div>
-          ))}
-        </Carousel>
+            <div className="col-span-4">
+              <h5>Ads : </h5>
+              {images.length > 0 && ( // Check if images array is not empty
+                <img
+                  className="object-cover "
+                  src={"http://127.0.0.1:8000/recipe_img/" + images[0].name} // Display only the first image
+                  alt="First Image"
+                />
+              )}
+            </div>
+          </div>
+        </div>
 
         <div className="max-w-[1088px] mx-auto mt-10">
           <div className="border-t-2 border-b-2 border-slate-400 py-6 text-center flex flex-col md:flex-row justify-center items-center">
@@ -139,7 +163,6 @@ const Details = () => {
               ></i>
             </div>
           </div>
-
           <div className="mt-10 flex gap-10 justify-center bg-navy-blue">
             <div className="w-[170px] h-[85px]  flex flex-col items-center justify-center">
               <p className="font-light text-white">PREP TIME</p>
@@ -154,19 +177,16 @@ const Details = () => {
               <p className="font-thin text-white">{detail.serving} people</p>
             </div>
           </div>
-
           <div className="mt-16">
             <h3 className="mb-6 text-regular font-semibold">AUTHOR NOTE</h3>
             <p className="text-body">{detail.author_note}</p>
           </div>
-
           {detail.kitchen_note && (
             <div className="mt-16">
               <h3 className="mb-6 text-regular font-semibold">KITCHEN NOTE</h3>
               <p className="text-body">{detail.kitchen_note}</p>
             </div>
           )}
-
           <div className="mt-16">
             <h3 className="text-regular font-semibold mb-5">Ingredients</h3>
             <hr className="my-5" />
@@ -178,23 +198,53 @@ const Details = () => {
               </div>
             ))}
           </div>
-
+          {/* direction */}
           <div className="mt-16">
             <h3 className="text-regular font-semibold">Direction</h3>
-            <hr className="my-7 h-[2px] bg-slate-300  " />
-            <div className="opacity-80 text-body">
-              {direction.map((dir, index) => (
-                <div
-                  key={index}
-                  className="flex opacity-55 hover:bg-secondary p-3 gap-5 mb-8"
-                >
-                  <div className="border-2 rounded-full min-w-10 max-h-10 flex items-center justify-center">
-                    {index + 1}
+            <hr className="my-7 h-[2px] bg-slate-300" />
+
+            {userType === "free" && recipeType === "free" && (
+              <div className=" text-body">
+                {direction.map((dir, index) => (
+                  <div
+                    key={index}
+                    className="flex opacity-55 hover:bg-secondary p-3 gap-5 mb-8"
+                  >
+                    <div className="border-2 rounded-full min-w-10 max-h-10 flex items-center justify-center">
+                      {index + 1}
+                    </div>
+                    <p className="mt-2">{dir.step}</p>
                   </div>
-                  <p className=" mt-2">{dir.step}</p>
+                ))}
+              </div>
+            )}
+
+            {userType === "premium" && (
+              <div className="opacity-80 text-body">
+                {direction.map((dir, index) => (
+                  <div
+                    key={index}
+                    className="flex opacity-55 hover:bg-secondary p-3 gap-5 mb-8"
+                  >
+                    <div className="border-2 rounded-full min-w-10 max-h-10 flex items-center justify-center">
+                      {index + 1}
+                    </div>
+                    <p className="mt-2">{dir.step}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {userType !== "premium" && recipeType === "premium" && (
+              <Link className="text-body">
+                <div className="max-w-md mx-auto">
+                  <button className="p-2 text-regular font-nunito bg-yellow-300 rounded-md  ">
+                    <i class="text-white fa-solid fa-lock"></i> You need to buy
+                    the premium version to access the directions.
+                  </button>
                 </div>
-              ))}
-            </div>
+              </Link>
+            )}
           </div>
 
           <div className="flex flex-col md:flex-col gap-y-5 justify-center items-center mt-16 bg-navy-blue text-white py-14">
@@ -324,11 +374,16 @@ const Details = () => {
             </div>
             <hr className="mb-10 mt-5 h-[2px] bg-slate-300" />
             {reviews.map((review, index) => (
-              <div className="flex flex-col md:flex-row gap-10 mb-4">
+              <div
+                key={index}
+                className="flex flex-col md:flex-row gap-10 mb-5"
+              >
                 <div>
                   <img
-                    src="https://www.tvtime.com/_next/image?url=https%3A%2F%2Fartworks.thetvdb.com%2Fbanners%2Fperson%2F7876166%2F632d4d70c17dc.jpg&w=640&q=75"
-                    className="rounded-full min-w-24 h-24 object-cover"
+                    src={
+                      "http://127.0.0.1:8000/storage/user/" + review.user.image
+                    }
+                    className="rounded-full w-[50px] h-[50px] object-cover"
                     alt=""
                   />
                 </div>
@@ -345,7 +400,9 @@ const Details = () => {
                       })}
                     </span>
                   </div>
-                  <p className="mt-4 font-light text-body">{review.comment}</p>
+                  <p className="mt-4 font-light font-nunito text-body">
+                    {review.comment}
+                  </p>
                 </div>
               </div>
             ))}

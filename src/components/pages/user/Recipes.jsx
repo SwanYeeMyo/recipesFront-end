@@ -10,7 +10,7 @@ const Recipes = () => {
   const [serving, setServing] = useState("");
   const [prepTime, setPrepTime] = useState("");
   const [images, setImages] = useState([]);
-  const [dishTypes, setDistypes] = useState([]);
+  const [dishTypes, setDishType] = useState([]);
   const [type, setType] = useState();
   const [selectedDishTypes, setSelectedDishTypes] = useState([]);
 
@@ -85,7 +85,7 @@ const Recipes = () => {
   };
   useEffect(() => {
     axios.get("http://127.0.0.1:8000/api/dishTypes").then((res) => {
-      setDistypes(res.data.data);
+      setDishType(res.data.data);
       console.log(res.data.data[0].name);
     });
   }, []);
@@ -197,7 +197,6 @@ const Recipes = () => {
                 <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                   Author_note
                 </label>
-                {author_note}
                 <textarea
                   onChange={(e) => setAuthorNote(e.target.value)}
                   name="author_note" // Ensure the name attribute is set correctly
@@ -407,7 +406,9 @@ const Recipes = () => {
                   onChange={(e) => setType(e.target.value)}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 >
-                  <option value="free">Free</option>
+                  <option selected value="free">
+                    Free
+                  </option>
                   <option value="premium">Premium</option>
                 </select>
               </div>
