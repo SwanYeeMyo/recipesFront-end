@@ -72,12 +72,29 @@ const Navbar = () => {
                 SignUp
               </Link> */}
               {localStorage.getItem("name") ? (
-                <Link
-                  to={"/account"}
-                  className="uppercase block font-medium text-gray-600 hover:text-classic dark:text-gray-400 dark:hover:text-gray-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-                >
-                  {userData.name}
-                </Link>
+                <>
+                  <div className="">
+                    <Link
+                      to={"/account"}
+                      className=" m-atuo uppercase block font-medium text-gray-600 hover:text-classic dark:text-gray-400 dark:hover:text-gray-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+                    >
+                      <div className="flex items-center justify-center gap-2">
+                        {userData.image && (
+                          <img
+                            src={
+                              "http://127.0.0.1:8000/storage/user/" +
+                              userData.image
+                            }
+                            className="bg-black w-[40px] h-[40px] rounded-full"
+                            alt=""
+                          />
+                        )}
+
+                        {userData.name}
+                      </div>
+                    </Link>
+                  </div>
+                </>
               ) : null}
             </div>
             <button

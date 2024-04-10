@@ -23,7 +23,7 @@ export default {
         "sub-title": "32px",
         body: "18px",
         section: "42px",
-        regular: "20px",
+        regular: "18px",
         small: "10px",
       },
       fontWeight: {
@@ -31,5 +31,5 @@ export default {
       },
     },
   },
-  plugins: [require("preline/plugin"), require("flowbite/plugin")],
+  plugins: [require("flowbite/plugin")],
 };
