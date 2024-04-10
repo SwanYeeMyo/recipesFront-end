@@ -104,13 +104,26 @@ const NavSideBar = () => {
             </li>
             <li>
               {userData.type !== "free" && (
-                <Link
-                  to={"/account/recipes"}
-                  className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                >
-                  <i class="fa-solid fa-scroll"></i>
-                  <span className="flex-1 ms-3 whitespace-nowrap">Recipe</span>
-                </Link>
+                <div className="gap-3">
+                  <Link
+                    to={"/account/recipes"}
+                    className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                  >
+                    <i class="fa-solid fa-scroll"></i>
+                    <span className="flex-1 ms-3 whitespace-nowrap">
+                      Create Recipe
+                    </span>
+                  </Link>
+                  <Link
+                    to={"recipes"}
+                    className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                  >
+                    <i class="fa-solid fa-scroll"></i>
+                    <span className="flex-1 ms-3 whitespace-nowrap">
+                      View Recipe
+                    </span>
+                  </Link>
+                </div>
               )}
             </li>
             <li>
