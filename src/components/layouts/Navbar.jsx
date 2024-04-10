@@ -30,7 +30,7 @@ const Navbar = () => {
   return (
     <>
       <nav className="bg-white p-1 dark:bg-gray-900 fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
-        <div className="max-w-7xl  flex flex-wrap items-center  align-middle justify-between mx-auto  p-2 md:p-5">
+        <div className="max-w-6xl  flex flex-wrap items-center  align-middle justify-between mx-auto  p-2 md:p-5">
           <div className="sm:order-1 lg:order-2 order-1 ">
             <Link
               to={"/"}
@@ -59,18 +59,7 @@ const Navbar = () => {
                   </Link>
                 </>
               ) : null}
-              {/* <Link
-                className="block font-medium text-gray-600 hover:text-classic dark:text-classic dark:hover:text-gray-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-                to={"/login"}
-              >
-                Login
-              </Link>
-              <Link
-                className="block font-medium text-gray-600 hover:text-classic dark:text-classic dark:hover:text-gray-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-                to={"signup"}
-              >
-                SignUp
-              </Link> */}
+
               {localStorage.getItem("name") ? (
                 <>
                   <div className="">
@@ -162,28 +151,48 @@ const Navbar = () => {
                 </Link>
               </li>
               <li className="md:hidden">
-                <Link
-                  to={"/login"}
-                  className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-classic md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-                >
-                  Login
-                </Link>
-              </li>
-              <li className="md:hidden">
-                <Link
-                  to={"/signup"}
-                  className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-classic md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-                >
-                  SignUp
-                </Link>
-              </li>
-              <li className="md:hidden">
-                <Link
-                  to={"/sidebar"}
-                  className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-classic md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-                >
-                  Account
-                </Link>
+                {!localStorage.getItem("token") ? (
+                  <>
+                    <Link
+                      className="block font-medium text-gray-600 hover:text-classic dark:text-classic dark:hover:text-gray-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+                      to={"/login"}
+                    >
+                      Login
+                    </Link>
+                    <Link
+                      className="block font-medium text-gray-600 hover:text-classic dark:text-classic dark:hover:text-gray-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+                      to={"signup"}
+                    >
+                      SignUp
+                    </Link>
+                  </>
+                ) : null}
+
+                {localStorage.getItem("name") ? (
+                  <>
+                    <div className="md:hidden">
+                      <Link
+                        to={"/account"}
+                        className=" m-atuo uppercase block font-medium text-gray-600 hover:text-classic dark:text-gray-400 dark:hover:text-gray-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+                      >
+                        <div className="flex items-center justify-center gap-2">
+                          {userData.image && (
+                            <img
+                              src={
+                                "http://127.0.0.1:8000/storage/user/" +
+                                userData.image
+                              }
+                              className="bg-black w-[40px] h-[40px] rounded-full"
+                              alt=""
+                            />
+                          )}
+
+                          {userData.name}
+                        </div>
+                      </Link>
+                    </div>
+                  </>
+                ) : null}
               </li>
             </ul>
           </div>

@@ -75,7 +75,8 @@ const Details = () => {
           {detail.title}
         </h2>
         <p className="italic font-extralight text-center text-sm">
-          by: {userData.name}|| {detail.creeated_at}
+          By: {userData.name}
+          {detail.creeated_at}
         </p>
         <div className="text-medium font-extralight flex flex-col md:flex-row gap-2 justify-center mt-5">
           <div>
@@ -108,7 +109,7 @@ const Details = () => {
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-12 gap-5">
             <div className="col-span-8">
               <Carousel>
@@ -239,8 +240,10 @@ const Details = () => {
               <Link className="text-body">
                 <div className="max-w-md mx-auto">
                   <button className="p-2 text-regular font-nunito bg-yellow-300 rounded-md  ">
-                    <i class="text-white fa-solid fa-lock"></i> You need to buy
-                    the premium version to access the directions.
+                    <i class="text-white fa-solid fa-lock mx-3"></i> You need to
+                    buy the premium version to access the directions. You can
+                    contact the Admin with contact form
+                    <Link to={"/account"}> go here</Link>
                   </button>
                 </div>
               </Link>
