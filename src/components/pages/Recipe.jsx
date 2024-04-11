@@ -30,7 +30,7 @@ const Recipe = () => {
       try {
         const response = await axios.get("http://127.0.0.1:8000/api/recipes");
         const dishtypesResponse = await axios.get(
-          "http://127.0.0.1:8000/api/dishTypes"
+          "http://127.0.0.1:8000/api/filterDishTypes"
         );
         const sortedRecipes = response.data.data.sort((a, b) => {
           return new Date(b.created_at) - new Date(a.created_at);
