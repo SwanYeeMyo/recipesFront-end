@@ -10,8 +10,10 @@ const Footer = () => {
             <h5 className="uppercase mb-5 text-sub-title  font-nunito font-black text-white">
               FLAVOR FUSION
             </h5>
-            <div className="flex  mx-auto mb-16">
-              <div className="w-56">
+
+            <div className="flex mx-auto mb-16">
+              <div className="w-24 sm:w-56">
+
                 <h5 className="text-regular text-start text-white font-black">
                   Company
                 </h5>
@@ -31,7 +33,7 @@ const Footer = () => {
                 </div>
               </div>
 
-              <div className="w-56">
+              <div className="w-24 sm:w-56">
                 <h5 className="text-regular text-start text-white font-black">
                   Get Help
                 </h5>
@@ -51,7 +53,7 @@ const Footer = () => {
                 </div>
               </div>
 
-              <div className="w-48">
+              <div className="w-24 sm:w-48">
                 <h5 className="text-regular text-start text-white font-black">
                   Explore
                 </h5>
@@ -79,9 +81,9 @@ const Footer = () => {
               Policy
             </p>
           </div>
-          <div className="bg-white w-px h-56 mt-14 mr-24"></div>
+          <div className="w-0 h-0 mt-0 mr-0 bg-white sm:w-px sm:h-56 sm:mt-14 sm:mr-24"></div>
           <div>
-            <div className="uppercase text-regular mt-16 mb-3 font-nunito font-black text-white">
+            <div className="uppercase text-regular mt-5 sm:mt-16 mb-3 font-nunito font-black text-white">
               Signup For Our Newsletters
             </div>
             <p className="font-nunito  mb-3 w-80 font-black text-white">
@@ -97,10 +99,10 @@ const Footer = () => {
               Sign Up
             </button>
             <div>
-              <i className="fa-brands fa-facebook-f text-white text-4xl mr-7"></i>
-              <i className="fa-brands fa-instagram text-white text-4xl mr-7"></i>
-              <i className="fa-brands fa-x-twitter text-white text-4xl mr-7"></i>
-              <i className="fa-brands fa-youtube text-white text-4xl mr-7"></i>
+              <a href="https://www.facebook.com"><i className="fa-brands fa-facebook-f text-white text-4xl mr-7" target="_blank"></i></a>
+              <a href="https://www.instagram.com/?hl=en"><i className="fa-brands fa-instagram text-white text-4xl mr-7" target="_blank"></i></a>
+              <a href="https://twitter.com/?lang-en"><i className="fa-brands fa-x-twitter text-white text-4xl mr-7"></i></a>
+              <a href="https://www.youtube.com"><i className="fa-brands fa-youtube text-white text-4xl mr-7"></i></a>
             </div>
           </div>
         </div>
