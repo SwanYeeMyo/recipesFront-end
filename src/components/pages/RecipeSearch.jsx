@@ -26,7 +26,7 @@ const RecipeSearch = () => {
           Back
         </Link>
         {data.length > 0 ? (
-          <div className="grid grid-cols-12 md:grid-cols-4 gap-6">
+          <div className="grid  md:grid-cols-4 gap-6">
             {data.map((recipe, index) => (
               <div key={index} className="col-span-1">
                 <Card
@@ -37,12 +37,9 @@ const RecipeSearch = () => {
             ))}
           </div>
         ) : (
-          <div>
-            <h5 className="text-center">
-              No Data for{" "}
-              <mark className="bg-classic text-white font-nunito text-regular">
-                {recipe}
-              </mark>{" "}
+          <div className="my-5">
+            <h5 className="text-center text-xl text-navy-blue">
+              No Data for {recipe}{" "}
             </h5>
           </div>
         )}

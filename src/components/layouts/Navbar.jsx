@@ -1,8 +1,9 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
   const [userData, setUserData] = useState([]);
@@ -26,6 +27,12 @@ const Navbar = () => {
       }
     }
   }, [id]);
+
+  const logout = () => {
+    console.log("click");
+    localStorage.clear();
+    navigate("/");
+  };
 
   return (
     <>
@@ -62,7 +69,7 @@ const Navbar = () => {
 
               {localStorage.getItem("name") ? (
                 <>
-                  <div className="">
+                  <div className="flex">
                     <Link
                       to={"/account"}
                       className=" m-atuo uppercase block font-medium text-gray-600 hover:text-classic dark:text-gray-400 dark:hover:text-gray-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
@@ -82,6 +89,14 @@ const Navbar = () => {
                         {userData.name}
                       </div>
                     </Link>
+
+                    <button
+                      type="button"
+                      onClick={logout}
+                      className="text-gray ms-6 text-gray-600 hover:text-classic"
+                    >
+                      Logout
+                    </button>
                   </div>
                 </>
               ) : null}
@@ -119,7 +134,7 @@ const Navbar = () => {
               <li>
                 <Link
                   to={"/"}
-                  className="block py-2 px-3 text-gray-900 rounded md:bg-transparent md:text-classic md:p-0 "
+                  className="block py-2 px-3 text-gray-900 rounded md:bg-transparent  md:p-0 "
                   aria-current="page"
                 >
                   Home

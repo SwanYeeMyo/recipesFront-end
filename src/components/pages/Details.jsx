@@ -20,9 +20,16 @@ const Details = () => {
   const [userType, setUserType] = useState(
     localStorage.getItem("type") || "free"
   );
+  const [rating, setRating] = useState([]);
+  const [currentRating, setCurrentRating] = useState(0);
+  const [userRating, setUserRating] = useState(null);
   const [recipeType, setRecipeType] = useState("");
   const { id } = useParams();
   const user_id = localStorage.getItem("id");
+
+  const totalRatings = rating.length;
+  const sumOfRatings = rating.reduce((acc, curr) => acc + curr.rating, 0);
+  const averageRating = totalRatings > 0 ? sumOfRatings / totalRatings : 0;
   const getData = () => {
     axios
       .get("http://127.0.0.1:8000/api/recipes/" + id + "/detail")
@@ -39,6 +46,7 @@ const Details = () => {
         setDirections(res.data.data["directions"]);
         setIngredients(res.data.data["ingredients"]);
         setImages(res.data.data["images"]);
+        setRating(res.data.data.ratings);
         // console.log(res.data.data["ingredients"]);
       });
   };
@@ -59,13 +67,74 @@ const Details = () => {
         getData();
         setReview(""); // Clear the review input after successful submission
       })
-      .catch((error) => console.error(error)); // Add error handling
+      .catch((error) => console.error(error));
+  }; // Add error handling
 
-    for (var pair of formData.entries()) {
-      console.log(pair[0] + ", " + pair[1]);
+  useEffect(() => {
+    const fetchUserRating = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(
+          `http://127.0.0.1:8000/api/ratings?recipe_id=${id}&user_id=${user_id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const userRatings = response.data.data; // Access the array within response.data
+
+        console.log("User ratings found:", userRatings);
+
+        const userRating = userRatings.find((rating) => {
+          return (
+            rating.recipe_id === parseInt(id) &&
+            rating.user_id === parseInt(user_id)
+          );
+        });
+
+        if (userRating) {
+          setUserRating(userRating.rating);
+        }
+      } catch (error) {
+        console.error("Error fetching user rating:", error);
+      }
+    };
+
+    fetchUserRating();
+  }, [id, user_id]);
+
+  const handleStarClick = async (value) => {
+    try {
+      const token = localStorage.getItem("token");
+      console.log(`Star clicked with value: ${value}`);
+
+      const response = await axios.post(
+        `http://127.0.0.1:8000/api/ratings`, // Adjusted to your ratings endpoint
+        {
+          recipe_id: id,
+          user_id: user_id, // Make sure the backend is expecting user_id
+          rating: value,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log("Response from server:", response);
+      if (response.status === 200) {
+        console.log("Rating submitted successfully", response.data);
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error("Failed to submit rating", error);
+      // Handle error
     }
   };
-
   const [review, setReview] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   return (
@@ -80,15 +149,15 @@ const Details = () => {
         </p>
         <div className="text-medium font-extralight flex flex-col md:flex-row gap-2 justify-center mt-5">
           <div>
-            <span className="me-1">4</span>
-            <i className="text-yellow-300 fa-solid fa-star me-1"></i>
-            <i className="text-yellow-300 fa-solid fa-star me-1"></i>
-            <i className="text-yellow-300 fa-solid fa-star me-1"></i>
-            <i className="text-yellow-300 fa-solid fa-star me-1"></i>
-            <i className="text-yellow-300 fa-solid fa-star me-1"></i>
+            {[...Array(Math.round(averageRating))].map((_, index) => (
+              <i
+                key={index}
+                className="text-yellow-300 fa-solid fa-star me-1"
+              ></i>
+            ))}
           </div>
           <div>
-            <p>6 Ratings</p>
+            <p>{totalRatings} Ratings</p>
           </div>
           <div>
             <p>View {reviews.length} Reviews</p>
@@ -137,279 +206,271 @@ const Details = () => {
         </div>
 
         <div className="max-w-[1088px] mx-auto mt-10">
-          <div className="border-t-2 border-b-2 border-slate-400 py-6 text-center flex flex-col md:flex-row justify-center items-center">
-            <span className="text-sub-title lg:me-4 md:me-0 md:mb-0">
-              Rate this recipe:
-            </span>
-            <div className="flex flex-row-reverse gap-1">
-              <i
-                className="star fa-solid fa-star text-3xl text-gray-200"
-                data-value="5"
-              ></i>
-              <i
-                className="star fa-solid fa-star text-3xl text-gray-200"
-                data-value="4"
-              ></i>
-              <i
-                className="star fa-solid fa-star text-3xl text-gray-200"
-                data-value="3"
-              ></i>
-              <i
-                className="star fa-solid fa-star text-3xl text-gray-200"
-                data-value="2"
-              ></i>
-              <i
-                className="star fa-solid fa-star text-3xl text-gray-200"
-                data-value="1"
-              ></i>
-            </div>
-          </div>
-          <div className="mt-10 flex gap-10 justify-center bg-navy-blue">
-            <div className="w-[170px] h-[85px]  flex flex-col items-center justify-center">
-              <p className="font-light text-white">PREP TIME</p>
-              <p className="font-thin text-white">{detail.cook_time} mins</p>
-            </div>
-            <div className="w-[170px] h-[85px] border-none flex flex-col items-center justify-center">
-              <p className="font-light text-white">COOK TIME</p>
-              <p className="font-thin text-white">{detail.prep_time} mins</p>
-            </div>
-            <div className="w-[170px] h-[85px] border-none flex flex-col items-center justify-center">
-              <p className="font-light text-white">SERVES</p>
-              <p className="font-thin text-white">{detail.serving} people</p>
-            </div>
-          </div>
-          <div className="mt-16">
-            <h3 className="mb-6 text-regular font-semibold">AUTHOR NOTE</h3>
-            <p className="text-body text-navy-blue ">{detail.author_note}</p>
-          </div>
-          {detail.kitchen_note && (
-            <div className="mt-16">
-              <h3 className="mb-6 text-regular font-semibold">KITCHEN NOTE</h3>
-              <p className="text-body text-navy-blue">{detail.kitchen_note}</p>
+          {userRating !== null ? null : (
+            <div className="border-t-2 border-b-2 border-slate-400 py-6 text-center flex flex-col md:flex-row justify-center items-center">
+              <span className="text-sub-title lg:me-4 md:me-0 md:mb-0">
+                Rate this recipe:
+              </span>
+
+              <div className="flex flex-row-reverse gap-1">
+                {[5, 4, 3, 2, 1].map((value) => (
+                  <i
+                    key={value}
+                    className={`star fa-solid fa-star text-3xl ${
+                      value <= currentRating
+                        ? "text-yellow-500"
+                        : "text-gray-200"
+                    } cursor-pointer`}
+                    onClick={() => handleStarClick(value)}
+                    data-value={value}
+                  ></i>
+                ))}
+              </div>
             </div>
           )}
-          <div className="mt-16">
-            <h3 className="text-regular font-semibold mb-5">Ingredients</h3>
-            <hr className="my-5" />
-            {ingredient.map((ing, index) => (
-              <div key={index} className="font-nunito flex gap-2 mb-5">
-                <h5 className="text-navy-blue">{ing.qty}</h5>
-                <h5 className="text-navy-blue">{ing.measurement}</h5>
-                <h5 className="text-navy-blue">{ing.name}</h5>
-              </div>
-            ))}
+        </div>
+        <div className="mt-10 flex gap-10 justify-center bg-navy-blue">
+          <div className="w-[170px] h-[85px]  flex flex-col items-center justify-center">
+            <p className="font-light text-white">PREP TIME</p>
+            <p className="font-thin text-white">{detail.cook_time} mins</p>
           </div>
-          {/* direction */}
-          <div className="mt-16">
-            <h3 className="text-regular font-semibold">Direction</h3>
-            <hr className="my-7 h-[2px] bg-slate-300" />
-
-            {userType === "free" && recipeType === "free" && (
-              <div className=" text-body">
-                {direction.map((dir, index) => (
-                  <div
-                    key={index}
-                    className="flex opacity-55 hover:bg-secondary p-3 gap-5 mb-8"
-                  >
-                    <div className="border-2 rounded-full min-w-10 max-h-10 flex items-center justify-center">
-                      {index + 1}
-                    </div>
-                    <p className="mt-2">{dir.step}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {userType === "premium" && (
-              <div className="opacity-80 text-body">
-                {direction.map((dir, index) => (
-                  <div
-                    key={index}
-                    className="flex text-navy-blue hover:bg-secondary p-3 gap-5 mb-8"
-                  >
-                    <div className=" bg-navy-blue text-white rounded-full min-w-10 max-h-10 flex items-center justify-center">
-                      {index + 1}
-                    </div>
-                    <p className="mt-2">{dir.step}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {userType !== "premium" && recipeType === "premium" && (
-              <Link className="text-body">
-                <div className="max-w-md mx-auto">
-                  <button className="p-2 text-regular font-nunito bg-yellow-300 rounded-md  ">
-                    <i class="text-white fa-solid fa-lock mx-3"></i> You need to
-                    buy the premium version to access the directions. You can
-                    contact the Admin with contact form
-                    <Link to={"/account"}> go here</Link>
-                  </button>
-                </div>
-              </Link>
-            )}
+          <div className="w-[170px] h-[85px] border-none flex flex-col items-center justify-center">
+            <p className="font-light text-white">COOK TIME</p>
+            <p className="font-thin text-white">{detail.prep_time} mins</p>
           </div>
-
-          <div className="flex flex-col md:flex-col gap-y-5 justify-center items-center mt-16 bg-navy-blue text-white py-14">
-            <GoCommentDiscussion className="text-5xl" />
-            <h3 className="text-sub-title font-merri font-bold opacity-70">
-              See Reviews
-            </h3>
-            <p className="text-regular font-regular">
-              See what other foodies are saying
-            </p>
-            <div className="flex flex-wrap gap-8">
-              <img
-                className="rounded-full w-20 h-20 object-cover"
-                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSA9SdRTT5veissNXjFWRG6e1nxaqNHgf12dw&s"
-                alt="profile1"
-              />
-              <img
-                className="rounded-full w-20 h-20 object-cover"
-                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSA9SdRTT5veissNXjFWRG6e1nxaqNHgf12dw&s"
-                alt="profile1"
-              />
-              <img
-                className="rounded-full w-20 h-20 object-cover"
-                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSA9SdRTT5veissNXjFWRG6e1nxaqNHgf12dw&s"
-                alt="profile1"
-              />
-              <img
-                className="rounded-full w-20 h-20 object-cover"
-                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSA9SdRTT5veissNXjFWRG6e1nxaqNHgf12dw&s"
-                alt="profile1"
-              />
-            </div>
-            <div className="border-2 border-slate-500 min-w-32 h-9 rounded-3xl flex justify-center items-center bg-white hover:bg-slate-200">
-              <i className="fa-regular fa-message me-2 text-white"></i>
-              <span className="font-light text-medium">REVIEW</span>
-            </div>
+          <div className="w-[170px] h-[85px] border-none flex flex-col items-center justify-center">
+            <p className="font-light text-white">SERVES</p>
+            <p className="font-thin text-white">{detail.serving} people</p>
           </div>
+        </div>
+        <div className="mt-16">
+          <h3 className="mb-6 text-regular font-semibold">AUTHOR NOTE</h3>
+          <p className="text-body text-navy-blue ">{detail.author_note}</p>
+        </div>
+        {detail.kitchen_note && (
           <div className="mt-16">
-            <h2 className="text-sub-title font-bold opacity-70 text-center">
-              REVIEWS
-            </h2>
-            <hr className="my-7 h-[2px] bg-slate-300" />
-            <div className="font-light text-regular mt-12">
-              <div className="">
-                <i className="fa-regular fa-message me-2 text-slate-500"></i>
-                <span className="me-2">{reviews.length}</span>
-                <span className="me-2">REVIEWS</span>
-              </div>
+            <h3 className="mb-6 text-regular font-semibold">KITCHEN NOTE</h3>
+            <p className="text-body text-navy-blue">{detail.kitchen_note}</p>
+          </div>
+        )}
+        <div className="mt-16">
+          <h3 className="text-regular font-semibold mb-5">Ingredients</h3>
+          <hr className="my-5" />
+          {ingredient.map((ing, index) => (
+            <div key={index} className="font-nunito flex gap-2 mb-5">
+              <h5 className="text-navy-blue">{ing.qty}</h5>
+              <h5 className="text-navy-blue">{ing.measurement}</h5>
+              <h5 className="text-navy-blue">{ing.name}</h5>
             </div>
-            <div className="my-8 relative">
-              <textarea
-                id="review-input"
-                placeholder="Leave a Review"
-                value={review}
-                name="review"
-                onChange={(e) => setReview(e.target.value)}
-                rows="5"
-                className="bg-slate-200 border border-gray-400 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full resize-none transition-all duration-1000 delay-75 ease-in-out overflow-hidden p-5 "
-              />
-              <div className="text-right mt-2">
-                {user_id ? (
-                  review && (
-                    <button
-                      onClick={submitHandle}
-                      className="bg-navy-blue text-white font-bold py-2 px-4 rounded"
-                    >
-                      Submit
-                    </button>
-                  )
-                ) : (
-                  <Link to={"/login"}>Please login to create reviews</Link>
-                )}
-              </div>
-            </div>
-            <div>
-              <div>
-                <button
-                  id="dropdownDefaultButton"
-                  data-dropdown-toggle="dropdown"
-                  className="text-white bg-navy-blue focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                  type="button"
-                >
-                  Order By{" "}
-                  <svg
-                    className="w-2.5 h-2.5 ms-3"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 10 6"
-                  >
-                    <path
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="m1 1 4 4 4-4"
-                    />
-                  </svg>
-                </button>
+          ))}
+        </div>
+        {/* direction */}
+        <div className="mt-16">
+          <h3 className="text-regular font-semibold">Direction</h3>
+          <hr className="my-7 h-[2px] bg-slate-300" />
+
+          {userType === "free" && recipeType === "free" && (
+            <div className=" text-body">
+              {direction.map((dir, index) => (
                 <div
-                  id="dropdown"
-                  className="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700"
+                  key={index}
+                  className="flex opacity-55 hover:bg-secondary p-3 gap-5 mb-8"
                 >
-                  <ul
-                    className="py-2 text-sm text-gray-700 dark:text-gray-200"
-                    aria-labelledby="dropdownDefaultButton"
-                  >
-                    <li>
-                      <a
-                        href="#"
-                        className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                      >
-                        Ascending
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="#"
-                        className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                      >
-                        Descending
-                      </a>
-                    </li>
-                  </ul>
+                  <div className="border-2 rounded-full min-w-10 max-h-10 flex items-center justify-center">
+                    {index + 1}
+                  </div>
+                  <p className="mt-2">{dir.step}</p>
                 </div>
+              ))}
+            </div>
+          )}
+
+          {userType === "premium" && (
+            <div className="opacity-80 text-body">
+              {direction.map((dir, index) => (
+                <div
+                  key={index}
+                  className="flex text-navy-blue hover:bg-secondary p-3 gap-5 mb-8"
+                >
+                  <div className=" bg-navy-blue text-white rounded-full min-w-10 max-h-10 flex items-center justify-center">
+                    {index + 1}
+                  </div>
+                  <p className="mt-2">{dir.step}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {userType !== "premium" && recipeType === "premium" && (
+            <Link className="text-body">
+              <div className="max-w-md mx-auto">
+                <button className="p-2 text-regular font-nunito bg-yellow-300 rounded-md  ">
+                  <i class="text-white fa-solid fa-lock mx-3"></i> You need to
+                  buy the premium version to access the directions. You can
+                  contact the Admin with contact form
+                  <Link to={"/account"}> go here</Link>
+                </button>
+              </div>
+            </Link>
+          )}
+        </div>
+
+        <div className="flex flex-col md:flex-col gap-y-5 justify-center items-center mt-16 bg-navy-blue text-white py-14">
+          <GoCommentDiscussion className="text-5xl" />
+          <h3 className="text-sub-title font-merri font-bold opacity-70">
+            See Reviews
+          </h3>
+          <p className="text-regular font-regular">
+            See what other foodies are saying
+          </p>
+          <div className="flex flex-wrap gap-8">
+            <img
+              className="rounded-full w-20 h-20 object-cover"
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSA9SdRTT5veissNXjFWRG6e1nxaqNHgf12dw&s"
+              alt="profile1"
+            />
+            <img
+              className="rounded-full w-20 h-20 object-cover"
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSA9SdRTT5veissNXjFWRG6e1nxaqNHgf12dw&s"
+              alt="profile1"
+            />
+            <img
+              className="rounded-full w-20 h-20 object-cover"
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSA9SdRTT5veissNXjFWRG6e1nxaqNHgf12dw&s"
+              alt="profile1"
+            />
+            <img
+              className="rounded-full w-20 h-20 object-cover"
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSA9SdRTT5veissNXjFWRG6e1nxaqNHgf12dw&s"
+              alt="profile1"
+            />
+          </div>
+          <div className="border-2 border-slate-500 min-w-32 h-9 rounded-3xl flex justify-center items-center bg-white hover:bg-slate-200">
+            <i className="fa-regular fa-message me-2 text-white"></i>
+            <span className="font-light text-medium">REVIEW</span>
+          </div>
+        </div>
+        <div className="mt-16">
+          <h2 className="text-sub-title font-bold opacity-70 text-center">
+            REVIEWS
+          </h2>
+          <hr className="my-7 h-[2px] bg-slate-300" />
+          <div className="font-light text-regular mt-12">
+            <div className="">
+              <i className="fa-regular fa-message me-2 text-slate-500"></i>
+              <span className="me-2">{reviews.length}</span>
+              <span className="me-2">REVIEWS</span>
+            </div>
+          </div>
+          <div className="my-8 relative">
+            <textarea
+              id="review-input"
+              placeholder="Leave a Review"
+              value={review}
+              name="review"
+              onChange={(e) => setReview(e.target.value)}
+              rows="5"
+              className="bg-slate-200 border border-gray-400 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full resize-none transition-all duration-1000 delay-75 ease-in-out overflow-hidden p-5 "
+            />
+            <div className="text-right mt-2">
+              {user_id ? (
+                review && (
+                  <button
+                    onClick={submitHandle}
+                    className="bg-navy-blue text-white font-bold py-2 px-4 rounded"
+                  >
+                    Submit
+                  </button>
+                )
+              ) : (
+                <Link to={"/login"}>Please login to create reviews</Link>
+              )}
+            </div>
+          </div>
+          <div>
+            <div>
+              <button
+                id="dropdownDefaultButton"
+                data-dropdown-toggle="dropdown"
+                className="text-white bg-navy-blue focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                type="button"
+              >
+                Order By{" "}
+                <svg
+                  className="w-2.5 h-2.5 ms-3"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 10 6"
+                >
+                  <path
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="m1 1 4 4 4-4"
+                  />
+                </svg>
+              </button>
+              <div
+                id="dropdown"
+                className="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700"
+              >
+                <ul
+                  className="py-2 text-sm text-gray-700 dark:text-gray-200"
+                  aria-labelledby="dropdownDefaultButton"
+                >
+                  <li>
+                    <a
+                      href="#"
+                      className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                    >
+                      Ascending
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      href="#"
+                      className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                    >
+                      Descending
+                    </a>
+                  </li>
+                </ul>
               </div>
             </div>
-            <hr className="mb-10 mt-5 h-[2px] bg-slate-300" />
-            {reviews.map((review, index) => (
-              <div
-                key={index}
-                className="flex flex-col md:flex-row gap-10 mb-5"
-              >
-                <div>
-                  <img
-                    src={
-                      "http://127.0.0.1:8000/storage/user/" + review.user.image
-                    }
-                    className="rounded-full w-[50px] h-[50px] object-cover"
-                    alt=""
-                  />
-                </div>
-                <div>
-                  <div>
-                    <span className="me-5 font-semibold text-regular">
-                      {review.user?.name || "Unknown User"}
-                    </span>
-                    <span className="text-medium opacity-80">
-                      {new Date(review.created_at).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </span>
-                  </div>
-                  <p className="mt-4 font-light font-nunito text-body">
-                    {review.comment}
-                  </p>
-                </div>
-              </div>
-            ))}
           </div>
+          <hr className="mb-10 mt-5 h-[2px] bg-slate-300" />
+          {reviews.map((review, index) => (
+            <div key={index} className="flex flex-col md:flex-row gap-10 mb-5">
+              <div>
+                <img
+                  src={
+                    "http://127.0.0.1:8000/storage/user/" + review.user.image
+                  }
+                  className="rounded-full w-[50px] h-[50px] object-cover"
+                  alt=""
+                />
+              </div>
+              <div>
+                <div>
+                  <span className="me-5 font-semibold text-regular">
+                    {review.user?.name || "Unknown User"}
+                  </span>
+                  <span className="text-medium opacity-80">
+                    {new Date(review.created_at).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </span>
+                </div>
+                <p className="mt-4 font-light font-nunito text-body">
+                  {review.comment}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </>

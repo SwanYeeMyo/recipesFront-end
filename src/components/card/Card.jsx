@@ -2,8 +2,23 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const Card = ({ recipe, image }) => {
-  // console.log(recipe.images[0].name);
-  console.log(recipe);
+  const calculateAverageRating = (ratings) => {
+    if (ratings.length === 0) return 0;
+
+    const totalRatings = ratings.length;
+    const sumRatings = ratings.reduce((acc, curr) => acc + curr.rating, 0);
+    const averageRating = sumRatings / totalRatings;
+
+    // Round averageRating to the nearest integer
+    const roundedRating = Math.round(averageRating);
+
+    // Create an array of length roundedRating to represent the stars
+    const stars = Array.from({ length: roundedRating }, (_, index) => (
+      <i key={index} className="text-yellow-300 fa-solid fa-star"></i>
+    ));
+
+    return <span className="text-xs">{stars}</span>;
+  };
 
   return (
     <>
@@ -27,14 +42,7 @@ const Card = ({ recipe, image }) => {
             </div>
             <div>
               <h5 className="italic text-xs">
-                Rating:
-                <span className="text-xs">
-                  <i className="text-yellow-300 fa-solid fa-star"></i>
-                  <i className="text-yellow-300 fa-solid fa-star"></i>
-                  <i className="text-yellow-300 fa-solid fa-star"></i>
-                  <i className="text-yellow-300 fa-solid fa-star"></i>
-                  <i className="text-yellow-300 fa-solid fa-star"></i>
-                </span>
+                Rating: {calculateAverageRating(recipe.ratings)}
               </h5>
             </div>
           </div>

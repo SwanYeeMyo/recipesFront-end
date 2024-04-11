@@ -4,14 +4,16 @@ import { Link } from "react-router-dom";
 const Footer = () => {
   return (
     <>
-      <footer className="bg-green-leave mt-20  p-5">
+      <footer className="bg-green-leave  p-5">
         <div className="flex flex-wrap justify-center">
-          <div className="max-w-2xl">
+          <div className="max-w-5xl">
             <h5 className="uppercase mb-5 text-sub-title  font-nunito font-black text-white">
               FLAVOR FUSION
             </h5>
+
             <div className="flex mx-auto mb-16">
               <div className="w-24 sm:w-56">
+
                 <h5 className="text-regular text-start text-white font-black">
                   Company
                 </h5>
@@ -28,9 +30,6 @@ const Footer = () => {
                   <Link className="text-start" to={"/contact"}>
                     <p className="text-base">Press</p>
                   </Link>
-                  {/* <Link to={"/signup"}>Registry</Link>
-                  <Link>Advertising Inquiries</Link>
-                  <Link>Do Not Sell</Link> */}
                 </div>
               </div>
 
@@ -39,8 +38,6 @@ const Footer = () => {
                   Get Help
                 </h5>
                 <div className="flex  text-white font-nutito text-regular flex-col text-start ">
-                  {/* <h5 className="">Contact </h5> */}
-
                   <Link className="text-start" to={"/contact"}>
                     <p className="text-base">Contact & FAQ</p>
                   </Link>
@@ -61,8 +58,6 @@ const Footer = () => {
                   Explore
                 </h5>
                 <div className="flex text-white font-nutito text-regular flex-col text-start ">
-                  {/* <h5 className="">Contact </h5> */}
-
                   <Link className="text-start" to={"/contact"}>
                     <p className="text-base">The Shop</p>
                   </Link>
@@ -91,7 +86,7 @@ const Footer = () => {
             <div className="uppercase text-regular mt-5 sm:mt-16 mb-3 font-nunito font-black text-white">
               Signup For Our Newsletters
             </div>
-            <p className="font-nunito font-normal mb-3 w-80 font-black text-white">
+            <p className="font-nunito  mb-3 w-80 font-black text-white">
               Our best tip for eating thoughtfully and living joyfully right in
               your inbox.
             </p>
