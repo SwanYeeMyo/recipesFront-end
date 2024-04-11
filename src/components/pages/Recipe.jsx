@@ -8,7 +8,7 @@ const Recipe = () => {
   const [dishtypes, setDishtypes] = useState([]);
   const [selectedDishTypes, setSelectedDishTypes] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage] = useState(6); // Number of items per page, adjust as needed
+  const [perPage] = useState(9); // Number of items per page, adjust as needed
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState();
@@ -30,9 +30,12 @@ const Recipe = () => {
       try {
         const response = await axios.get("http://127.0.0.1:8000/api/recipes");
         const dishtypesResponse = await axios.get(
-          "http://127.0.0.1:8000/api/dishTypes"
+          "http://127.0.0.1:8000/api/filterDishTypes"
         );
-        setData(response.data.data);
+        const sortedRecipes = response.data.data.sort((a, b) => {
+          return new Date(b.created_at) - new Date(a.created_at);
+        });
+        setData(sortedRecipes);
         setFilterData(response.data.data); // Initialize filterData with all recipes
         setDishtypes(dishtypesResponse.data.data);
         console.log(response.data.data);
@@ -91,7 +94,7 @@ const Recipe = () => {
       ) : error ? (
         <div>Error: {error}</div>
       ) : (
-        <div className="container  mx-auto mt-24">
+        <div className="max-w-6xl  mx-auto mt-24">
           <div className="grid grid-cols-12 gap-2">
             <div className=" col-span-12 md:col-span-3   ">
               <div className="w-full rounded shadow-sm h-[600px]">
@@ -119,46 +122,52 @@ const Recipe = () => {
               <div className="grid  grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-4">
                 {currentRecipes.map((recipe, index) => (
                   <div key={index} className="col-span-1">
-                    <Card recipe={recipe} />
+                    <Card
+                      image={recipe.images.length > 0 ? recipe.images[1] : null}
+                      recipe={recipe}
+                    />
                   </div>
                 ))}
               </div>
-
-              <nav className="flex justify-end items-center gap-x-1">
-                <button
-                  type="button"
-                  onClick={() => paginate(currentPage - 1)}
-                  disabled={currentPage === 1}
-                  className="min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-1.5 text-sm rounded-lg text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10"
-                >
-                  <span>Previous</span>
-                </button>
-                <div className="flex items-center gap-x-1">
-                  {Array.from({ length: totalPages }, (_, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      onClick={() => paginate(i + 1)}
-                      className={`min-h-[38px] min-w-[38px] flex justify-center items-center ${
-                        currentPage === i + 1
-                          ? "bg-navy-blue text-white"
-                          : "text-gray-800 hover:bg-gray-100"
-                      } py-2 px-3 text-sm rounded-lg focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none `}
-                      aria-current={currentPage === i + 1 ? "page" : null}
-                    >
-                      {i + 1}
-                    </button>
-                  ))}
-                </div>
-                <button
-                  type="button"
-                  onClick={() => paginate(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                  className="min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-1.5 text-sm rounded-lg text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10"
-                >
-                  <span>Next</span>
-                </button>
-              </nav>
+              {filterData.length > 0 ? (
+                <nav className="flex justify-end items-center gap-x-1 my-3">
+                  <button
+                    type="button"
+                    onClick={() => paginate(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-1.5 text-sm rounded-lg text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10"
+                  >
+                    <span>Previous</span>
+                  </button>
+                  <div className="flex items-center gap-x-1">
+                    {Array.from({ length: totalPages }, (_, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => paginate(i + 1)}
+                        className={`min-h-[38px] min-w-[38px] flex justify-center items-center ${
+                          currentPage === i + 1
+                            ? "bg-navy-blue text-white"
+                            : "text-gray-800 hover:bg-gray-100"
+                        } py-2 px-3 text-sm rounded-lg focus:outline-none focus:bg-navy-blue disabled:opacity-50 disabled:pointer-events-none `}
+                        aria-current={currentPage === i + 1 ? "page" : null}
+                      >
+                        {i + 1}
+                      </button>
+                    ))}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => paginate(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-1.5 text-sm rounded-lg text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10"
+                  >
+                    <span>Next</span>
+                  </button>
+                </nav>
+              ) : (
+                <h5>No data available</h5>
+              )}
             </div>
           </div>
         </div>

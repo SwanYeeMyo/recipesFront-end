@@ -10,7 +10,7 @@ const Recipes = () => {
   const [serving, setServing] = useState("");
   const [prepTime, setPrepTime] = useState("");
   const [images, setImages] = useState([]);
-  const [dishTypes, setDistypes] = useState([]);
+  const [dishTypes, setDishType] = useState([]);
   const [type, setType] = useState();
   const [selectedDishTypes, setSelectedDishTypes] = useState([]);
 
@@ -85,10 +85,24 @@ const Recipes = () => {
   };
   useEffect(() => {
     axios.get("http://127.0.0.1:8000/api/dishTypes").then((res) => {
-      setDistypes(res.data.data);
+      setDishType(res.data.data);
       console.log(res.data.data[0].name);
     });
   }, []);
+
+  const clearData = () => {
+    setTitle("");
+    setKitchenNote("");
+    setAuthorNote("");
+    setCookTime("");
+    setServing("");
+    setPrepTime("");
+    setImages([]);
+    setType();
+    setSelectedDishTypes([]);
+    setIngredients([{ qty: "", measurement: "", name: "" }]);
+    setSteps([{ step: "" }]);
+  };
 
   const postData = async () => {
     try {
@@ -143,13 +157,15 @@ const Recipes = () => {
 
       console.log(response.data);
       toast.success("Recipe created successfully");
+
+      // Reset all state variables to initial values after successful submission
     } catch (error) {
       console.error("Error creating recipe:", error);
       toast.error("Failed to create recipe");
     }
   };
 
-  const submitHandle = (e) => {
+  const submitHandle = async (e) => {
     e.preventDefault();
     if (
       !title ||
@@ -166,7 +182,8 @@ const Recipes = () => {
       toast.error("Please fill in all fields");
       return;
     }
-    postData();
+    await postData(); // Wait for postData() to finish before resetting state
+    clearData();
   };
 
   return (
@@ -188,6 +205,7 @@ const Recipes = () => {
                 <input
                   type="text"
                   name="title"
+                  value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Chicken Noodle Soup"
@@ -197,8 +215,8 @@ const Recipes = () => {
                 <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                   Author_note
                 </label>
-                {author_note}
                 <textarea
+                  value={author_note}
                   onChange={(e) => setAuthorNote(e.target.value)}
                   name="author_note" // Ensure the name attribute is set correctly
                   className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
@@ -212,6 +230,7 @@ const Recipes = () => {
                   Kitchen_note
                 </label>
                 <textarea
+                  value={kitchen_note}
                   name="kitchen_note"
                   onChange={(e) => setKitchenNote(e.target.value)}
                   className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
@@ -222,51 +241,56 @@ const Recipes = () => {
               <div className=" gap-5 flex w-full">
                 <div className=" flex-grow   mb-3">
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    Cook Time
+                    Cook Time (per minute)
                   </label>
                   <input
+                    value={cookTime}
                     type="text"
                     name="cook_time"
                     onChange={(e) => setCookTime(e.target.value)}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="John"
+                    placeholder="30 "
                   />
                 </div>
                 <div className="flex-grow mb-4">
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    Prep Time
+                    Prep Time (per minute)
                   </label>
                   <input
+                    value={prepTime}
                     type="text"
                     name="prep_time"
                     onChange={(e) => setPrepTime(e.target.value)}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="John"
+                    placeholder="5 "
                   />
                 </div>
                 <div className="flex-grow mb-3">
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    Serving
+                    Serving (person)
                   </label>
                   <input
+                    value={serving}
                     name="serving"
                     type="text"
                     onChange={(e) => setServing(e.target.value)}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="John"
+                    placeholder="5 "
                   />
                 </div>
               </div>
-              <div className="mb-3">
-                <label className="block mb-2">Select Image </label>
-                <input
-                  type="file"
-                  name="image[]"
-                  className="rounded-lg border w-full"
-                  onChange={handleImageChange}
-                  multiple
-                />
-              </div>
+              {images.length === 0 && (
+                <div className="mb-3">
+                  <label className="block mb-2">Select Image </label>
+                  <input
+                    type="file"
+                    name="image[]"
+                    className="rounded-lg border w-full"
+                    onChange={handleImageChange}
+                    multiple
+                  />
+                </div>
+              )}
 
               <div>
                 <div className="mb-3">
@@ -285,6 +309,7 @@ const Recipes = () => {
                         value={inputField.qty}
                         onChange={(event) => handleInputChange(index, event)}
                         className="border bg-gray-50 rounded-lg border-gray-300"
+                        placeholder="1"
                       />
                     </div>
                     <div className="flex flex-grow flex-col">
@@ -295,6 +320,7 @@ const Recipes = () => {
                         value={inputField.measurement}
                         onChange={(event) => handleInputChange(index, event)}
                         className="border bg-gray-50 rounded-lg border-gray-300"
+                        placeholder="table spoon of"
                       />
                     </div>
                     <div className="flex  flex-col">
@@ -305,6 +331,7 @@ const Recipes = () => {
                         value={inputField.name}
                         onChange={(event) => handleInputChange(index, event)}
                         className="border bg-gray-50 rounded-lg border-gray-300"
+                        placeholder="sugar"
                       />
                     </div>
 
@@ -363,6 +390,7 @@ const Recipes = () => {
                       onChange={(event) => handleInputDirection(event, index)}
                       value={inputField.step}
                       name="steps"
+                      placeholder="please write your steps here "
                       id=""
                       className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                       cols="30"
@@ -403,10 +431,11 @@ const Recipes = () => {
                 <select
                   name="type"
                   id="countries"
-                  value={type}
+                  defaultValue={type}
                   onChange={(e) => setType(e.target.value)}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 >
+                  <option selected>select an option</option>
                   <option value="free">Free</option>
                   <option value="premium">Premium</option>
                 </select>
