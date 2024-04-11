@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
   const [userData, setUserData] = useState([]);
@@ -29,7 +29,7 @@ const Navbar = () => {
   }, [id]);
 
   const logout = () => {
-    console.log('click');
+    console.log("click");
     localStorage.clear();
     navigate("/");
   };
@@ -89,14 +89,14 @@ const Navbar = () => {
                         {userData.name}
                       </div>
                     </Link>
-                  
-                      <button
+
+                    <button
                       type="button"
-                        onClick={logout}
-                        className="text-gray ms-6 text-gray-600 hover:text-classic"
-                      >
-                        Logout
-                      </button>
+                      onClick={logout}
+                      className="text-gray ms-6 text-gray-600 hover:text-classic"
+                    >
+                      Logout
+                    </button>
                   </div>
                 </>
               ) : null}
@@ -134,7 +134,7 @@ const Navbar = () => {
               <li>
                 <Link
                   to={"/"}
-                  className="block py-2 px-3 text-gray-900 rounded md:bg-transparent md:text-classic md:p-0 "
+                  className="block py-2 px-3 text-gray-900 rounded md:bg-transparent  md:p-0 "
                   aria-current="page"
                 >
                   Home

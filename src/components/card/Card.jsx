@@ -3,23 +3,23 @@ import { Link } from "react-router-dom";
 
 const Card = ({ recipe, image }) => {
   const calculateAverageRating = (ratings) => {
-		if (ratings.length === 0) return 0;
+    if (ratings.length === 0) return 0;
 
-		const totalRatings = ratings.length;
-		const sumRatings = ratings.reduce((acc, curr) => acc + curr.rating, 0);
-		const averageRating = sumRatings / totalRatings;
+    const totalRatings = ratings.length;
+    const sumRatings = ratings.reduce((acc, curr) => acc + curr.rating, 0);
+    const averageRating = sumRatings / totalRatings;
 
-		// Round averageRating to the nearest integer
-		const roundedRating = Math.round(averageRating);
+    // Round averageRating to the nearest integer
+    const roundedRating = Math.round(averageRating);
 
-		// Create an array of length roundedRating to represent the stars
-		const stars = Array.from({ length: roundedRating }, (_, index) => (
-			<i key={index} className="text-yellow-300 fa-solid fa-star"></i>
-		));
+    // Create an array of length roundedRating to represent the stars
+    const stars = Array.from({ length: roundedRating }, (_, index) => (
+      <i key={index} className="text-yellow-300 fa-solid fa-star"></i>
+    ));
 
-		return <span className="text-xs">{stars}</span>;
-	};
-  
+    return <span className="text-xs">{stars}</span>;
+  };
+
   return (
     <>
       <div className=" relative  flex flex-col bg-white shadow h-full rounded-md ">
@@ -41,12 +41,9 @@ const Card = ({ recipe, image }) => {
               <h5 className="text-xs italic">by: Author {recipe.user.name} </h5>
             </div>
             <div>
-             <h5 className="italic text-xs">
-								Rating:
-								<h5 className="italic text-xs">
-									Average Rating: {calculateAverageRating(recipe.ratings)}
-								</h5>
-							</h5>
+              <h5 className="italic text-xs">
+                Rating: {calculateAverageRating(recipe.ratings)}
+              </h5>
             </div>
           </div>
           <div className="">

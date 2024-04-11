@@ -37,8 +37,10 @@ const RecipeSearch = () => {
             ))}
           </div>
         ) : (
-          <div>
-            <h5 className="text-center">No Data for {recipe} </h5>
+          <div className="my-5">
+            <h5 className="text-center text-xl text-navy-blue">
+              No Data for {recipe}{" "}
+            </h5>
           </div>
         )}
       </div>
