@@ -193,7 +193,7 @@ const Home = () => {
                 feature recipe
               </h5>
               <h5 className="my-5 font-merri text-2xl  sm:text-sub-title">
-                Gordon Ramsay Makes an All American Burger
+                BEEF WELLINGTON-GORDON RAMSAY RECIPE!
               </h5>
               <p className="opacity-55">
                 Gordon is cooking up the perfect burger for the 4th of July!
@@ -209,7 +209,7 @@ const Home = () => {
           </div>
           <div className="w-full sm:w-2/4">
             <img
-              src="https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8YnVyZ2VyfGVufDB8fDB8fHww"
+              src="https://img.sndimg.com/food/image/upload/q_92,fl_progressive,w_1200,c_scale/v1/img/recipes/39/51/60/lWiLglIkRBWeFNAenZSh_beef-wellington-gordon-ramsey-4822.jpg"
               className="order-1 w-full h-[500px] object-cover"
               alt=""
             />

@@ -241,7 +241,7 @@ const Recipes = () => {
               <div className=" gap-5 flex w-full">
                 <div className=" flex-grow   mb-3">
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    Cook Time
+                    Cook Time (per minute)
                   </label>
                   <input
                     value={cookTime}
@@ -249,12 +249,12 @@ const Recipes = () => {
                     name="cook_time"
                     onChange={(e) => setCookTime(e.target.value)}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="John"
+                    placeholder="30 "
                   />
                 </div>
                 <div className="flex-grow mb-4">
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    Prep Time
+                    Prep Time (per minute)
                   </label>
                   <input
                     value={prepTime}
@@ -262,12 +262,12 @@ const Recipes = () => {
                     name="prep_time"
                     onChange={(e) => setPrepTime(e.target.value)}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="John"
+                    placeholder="5 "
                   />
                 </div>
                 <div className="flex-grow mb-3">
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    Serving
+                    Serving (person)
                   </label>
                   <input
                     value={serving}
@@ -275,7 +275,7 @@ const Recipes = () => {
                     type="text"
                     onChange={(e) => setServing(e.target.value)}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="John"
+                    placeholder="5 "
                   />
                 </div>
               </div>
@@ -309,6 +309,7 @@ const Recipes = () => {
                         value={inputField.qty}
                         onChange={(event) => handleInputChange(index, event)}
                         className="border bg-gray-50 rounded-lg border-gray-300"
+                        placeholder="1"
                       />
                     </div>
                     <div className="flex flex-grow flex-col">
@@ -319,6 +320,7 @@ const Recipes = () => {
                         value={inputField.measurement}
                         onChange={(event) => handleInputChange(index, event)}
                         className="border bg-gray-50 rounded-lg border-gray-300"
+                        placeholder="table spoon of"
                       />
                     </div>
                     <div className="flex  flex-col">
@@ -329,6 +331,7 @@ const Recipes = () => {
                         value={inputField.name}
                         onChange={(event) => handleInputChange(index, event)}
                         className="border bg-gray-50 rounded-lg border-gray-300"
+                        placeholder="sugar"
                       />
                     </div>
 
@@ -387,6 +390,7 @@ const Recipes = () => {
                       onChange={(event) => handleInputDirection(event, index)}
                       value={inputField.step}
                       name="steps"
+                      placeholder="please write your steps here "
                       id=""
                       className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                       cols="30"
