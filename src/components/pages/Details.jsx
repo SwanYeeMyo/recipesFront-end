@@ -20,9 +20,16 @@ const Details = () => {
   const [userType, setUserType] = useState(
     localStorage.getItem("type") || "free"
   );
+  const [rating, setRating] = useState([]);
+	const [currentRating, setCurrentRating] = useState(0);
+	const [userRating, setUserRating] = useState(null);
   const [recipeType, setRecipeType] = useState("");
   const { id } = useParams();
   const user_id = localStorage.getItem("id");
+  
+  const totalRatings = rating.length;
+	const sumOfRatings = rating.reduce((acc, curr) => acc + curr.rating, 0);
+	const averageRating = totalRatings > 0 ? sumOfRatings / totalRatings : 0;
   const getData = () => {
     axios
       .get("http://127.0.0.1:8000/api/recipes/" + id + "/detail")
@@ -52,20 +59,105 @@ const Details = () => {
     formData.append("recipe_id", id);
     formData.append("user_id", user_id);
 
-    axios
-      .post("http://127.0.0.1:8000/api/reviews", formData)
-      .then((res) => {
-        // Refetch comments data from the server
-        getData();
-        setReview(""); // Clear the review input after successful submission
-      })
-      .catch((error) => console.error(error)); // Add error handling
+	const getData = () => {
+		axios
+			.get("http://127.0.0.1:8000/api/recipes/" + id + "/detail")
+			.then((res) => {
+				console.log(res.data.data);
+				setReviews(res.data.data.reviews);
+				setDetail(res.data.data);
+				// console.log(res.data.data);
+				setDirections(res.data.data["directions"]);
+				setIngredients(res.data.data["ingredients"]);
+				setImages(res.data.data["images"]);
+				setRating(res.data.data.ratings);
+				// console.log(res.data.data["ingredients"]);
+			});
+	};
+	useEffect(() => {
+		getData();
+	}, []);
+	const submitHandle = (e) => {
+		e.preventDefault();
+		const formData = new FormData();
+		formData.append("comment", review);
+		formData.append("recipe_id", id);
+		formData.append("user_id", user_id);
 
-    for (var pair of formData.entries()) {
-      console.log(pair[0] + ", " + pair[1]);
-    }
-  };
+		axios
+			.post("http://127.0.0.1:8000/api/reviews", formData)
+			.then((res) => {
+				// Refetch comments data from the server
+				getData();
+				setReview(""); // Clear the review input after successful submission
+			})
+			.catch((error) => console.error(error)); // Add error handling
 
+	useEffect(() => {
+		const fetchUserRating = async () => {
+			try {
+				const token = localStorage.getItem("token");
+				const response = await axios.get(
+					`http://127.0.0.1:8000/api/ratings?recipe_id=${id}&user_id=${user_id}`,
+					{
+						headers: {
+							Authorization: `Bearer ${token}`,
+						},
+					}
+				);
+
+				const userRatings = response.data.data; // Access the array within response.data
+
+				console.log("User ratings found:", userRatings);
+
+				const userRating = userRatings.find((rating) => {
+					return (
+						rating.recipe_id === parseInt(id) &&
+						rating.user_id === parseInt(user_id)
+					);
+				});
+
+				if (userRating) {
+					setUserRating(userRating.rating);
+				}
+			} catch (error) {
+				console.error("Error fetching user rating:", error);
+			}
+		};
+
+		fetchUserRating();
+	}, [id, user_id]);
+
+	const handleStarClick = async (value) => {
+		try {
+			const token = localStorage.getItem("token");
+			console.log(`Star clicked with value: ${value}`);
+
+			const response = await axios.post(
+				`http://127.0.0.1:8000/api/ratings`, // Adjusted to your ratings endpoint
+				{
+					recipe_id: id,
+					user_id: user_id, // Make sure the backend is expecting user_id
+					rating: value,
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+						"Content-Type": "application/json",
+					},
+				}
+			);
+
+			console.log("Response from server:", response);
+			if (response.status === 200) {
+				console.log("Rating submitted successfully", response.data);
+				window.location.reload();
+			}
+		} catch (error) {
+			console.error("Failed to submit rating", error);
+			// Handle error
+		}
+	};
   const [review, setReview] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   return (
@@ -79,17 +171,17 @@ const Details = () => {
           {detail.creeated_at}
         </p>
         <div className="text-medium font-extralight flex flex-col md:flex-row gap-2 justify-center mt-5">
-          <div>
-            <span className="me-1">4</span>
-            <i className="text-yellow-300 fa-solid fa-star me-1"></i>
-            <i className="text-yellow-300 fa-solid fa-star me-1"></i>
-            <i className="text-yellow-300 fa-solid fa-star me-1"></i>
-            <i className="text-yellow-300 fa-solid fa-star me-1"></i>
-            <i className="text-yellow-300 fa-solid fa-star me-1"></i>
-          </div>
-          <div>
-            <p>6 Ratings</p>
-          </div>
+         	<div>
+						{[...Array(Math.round(averageRating))].map((_, index) => (
+							<i
+								key={index}
+								className="text-yellow-300 fa-solid fa-star me-1"
+							></i>
+						))}
+					</div>
+					<div>
+						<p>{totalRatings} Ratings</p>
+					</div>
           <div>
             <p>View {reviews.length} Reviews</p>
           </div>
@@ -137,32 +229,28 @@ const Details = () => {
         </div>
 
         <div className="max-w-[1088px] mx-auto mt-10">
-          <div className="border-t-2 border-b-2 border-slate-400 py-6 text-center flex flex-col md:flex-row justify-center items-center">
-            <span className="text-sub-title lg:me-4 md:me-0 md:mb-0">
-              Rate this recipe:
-            </span>
-            <div className="flex flex-row-reverse gap-1">
-              <i
-                className="star fa-solid fa-star text-3xl text-gray-200"
-                data-value="5"
-              ></i>
-              <i
-                className="star fa-solid fa-star text-3xl text-gray-200"
-                data-value="4"
-              ></i>
-              <i
-                className="star fa-solid fa-star text-3xl text-gray-200"
-                data-value="3"
-              ></i>
-              <i
-                className="star fa-solid fa-star text-3xl text-gray-200"
-                data-value="2"
-              ></i>
-              <i
-                className="star fa-solid fa-star text-3xl text-gray-200"
-                data-value="1"
-              ></i>
-            </div>
+          {userRating !== null ? null : (
+						<div className="border-t-2 border-b-2 border-slate-400 py-6 text-center flex flex-col md:flex-row justify-center items-center">
+							<span className="text-sub-title lg:me-4 md:me-0 md:mb-0">
+								Rate this recipe:
+							</span>
+
+							<div className="flex flex-row-reverse gap-1">
+								{[5, 4, 3, 2, 1].map((value) => (
+									<i
+										key={value}
+										className={`star fa-solid fa-star text-3xl ${
+											value <= currentRating
+												? "text-yellow-500"
+												: "text-gray-200"
+										} cursor-pointer`}
+										onClick={() => handleStarClick(value)}
+										data-value={value}
+									></i>
+								))}
+							</div>
+						</div>
+					)}
           </div>
           <div className="mt-10 flex gap-10 justify-center bg-navy-blue">
             <div className="w-[170px] h-[85px]  flex flex-col items-center justify-center">
