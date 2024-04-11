@@ -54,7 +54,7 @@ const Home = () => {
             <form onSubmit={submitHandler}>
               <input
                 type="text"
-                className="w-[800px] p-4 hover:border-black focus:ring-black"
+                className="md:w-[800px] w-[200px] p-4 hover:border-black focus:ring-black"
                 placeholder="Please Recipes and more"
                 value={searchData}
                 name="searchData"

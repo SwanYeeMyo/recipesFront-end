@@ -30,7 +30,7 @@ const Recipe = () => {
       try {
         const response = await axios.get("http://127.0.0.1:8000/api/recipes");
         const dishtypesResponse = await axios.get(
-          "http://127.0.0.1:8000/api/dishTypes"
+          "http://127.0.0.1:8000/api/filterDishTypes"
         );
         const sortedRecipes = response.data.data.sort((a, b) => {
           return new Date(b.created_at) - new Date(a.created_at);
@@ -130,7 +130,7 @@ const Recipe = () => {
                 ))}
               </div>
               {filterData.length > 0 ? (
-                <nav className="flex justify-end items-center gap-x-1">
+                <nav className="flex justify-end items-center gap-x-1 my-3">
                   <button
                     type="button"
                     onClick={() => paginate(currentPage - 1)}
