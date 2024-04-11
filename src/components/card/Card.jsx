@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 
 const Card = ({ recipe, image }) => {
   // console.log(recipe.images[0].name);
-  console.log(recipe);
 
   return (
     <>
