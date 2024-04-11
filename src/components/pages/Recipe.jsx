@@ -130,7 +130,7 @@ const Recipe = () => {
                 ))}
               </div>
               {filterData.length > 0 ? (
-                <nav className="flex justify-end items-center gap-x-1">
+                <nav className="flex justify-end items-center gap-x-1 my-3">
                   <button
                     type="button"
                     onClick={() => paginate(currentPage - 1)}
