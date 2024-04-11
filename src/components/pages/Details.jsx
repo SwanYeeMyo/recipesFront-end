@@ -71,11 +71,12 @@ const Details = () => {
   return (
     <>
       <div className="container mx-auto mt-32 font-nunito">
-        <h2 className="text-2xl mb-5 md:mb-8 md:text-section font-merri text-center text-navy-blue">
+        <h2 className="text-2xl  mb-5 md:mb-8 md:text-section font-merri text-center text-navy-blue">
           {detail.title}
         </h2>
         <p className="italic font-extralight text-center text-sm">
-          by: {userData.name}|| {detail.creeated_at}
+          By: {userData.name}
+          {detail.creeated_at}
         </p>
         <div className="text-medium font-extralight flex flex-col md:flex-row gap-2 justify-center mt-5">
           <div>
@@ -108,7 +109,7 @@ const Details = () => {
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-12 gap-5">
             <div className="col-span-8">
               <Carousel>
@@ -179,12 +180,12 @@ const Details = () => {
           </div>
           <div className="mt-16">
             <h3 className="mb-6 text-regular font-semibold">AUTHOR NOTE</h3>
-            <p className="text-body">{detail.author_note}</p>
+            <p className="text-body text-navy-blue ">{detail.author_note}</p>
           </div>
           {detail.kitchen_note && (
             <div className="mt-16">
               <h3 className="mb-6 text-regular font-semibold">KITCHEN NOTE</h3>
-              <p className="text-body">{detail.kitchen_note}</p>
+              <p className="text-body text-navy-blue">{detail.kitchen_note}</p>
             </div>
           )}
           <div className="mt-16">
@@ -192,9 +193,9 @@ const Details = () => {
             <hr className="my-5" />
             {ingredient.map((ing, index) => (
               <div key={index} className="font-nunito flex gap-2 mb-5">
-                <h5>{ing.qty}</h5>
-                <h5>{ing.measurement}</h5>
-                <h5>{ing.name}</h5>
+                <h5 className="text-navy-blue">{ing.qty}</h5>
+                <h5 className="text-navy-blue">{ing.measurement}</h5>
+                <h5 className="text-navy-blue">{ing.name}</h5>
               </div>
             ))}
           </div>
@@ -224,9 +225,9 @@ const Details = () => {
                 {direction.map((dir, index) => (
                   <div
                     key={index}
-                    className="flex opacity-55 hover:bg-secondary p-3 gap-5 mb-8"
+                    className="flex text-navy-blue hover:bg-secondary p-3 gap-5 mb-8"
                   >
-                    <div className="border-2 rounded-full min-w-10 max-h-10 flex items-center justify-center">
+                    <div className=" bg-navy-blue text-white rounded-full min-w-10 max-h-10 flex items-center justify-center">
                       {index + 1}
                     </div>
                     <p className="mt-2">{dir.step}</p>
@@ -239,8 +240,10 @@ const Details = () => {
               <Link className="text-body">
                 <div className="max-w-md mx-auto">
                   <button className="p-2 text-regular font-nunito bg-yellow-300 rounded-md  ">
-                    <i class="text-white fa-solid fa-lock"></i> You need to buy
-                    the premium version to access the directions.
+                    <i class="text-white fa-solid fa-lock mx-3"></i> You need to
+                    buy the premium version to access the directions. You can
+                    contact the Admin with contact form
+                    <Link to={"/account"}> go here</Link>
                   </button>
                 </div>
               </Link>
@@ -290,7 +293,7 @@ const Details = () => {
             <div className="font-light text-regular mt-12">
               <div className="">
                 <i className="fa-regular fa-message me-2 text-slate-500"></i>
-                <span className="me-2">14</span>
+                <span className="me-2">{reviews.length}</span>
                 <span className="me-2">REVIEWS</span>
               </div>
             </div>

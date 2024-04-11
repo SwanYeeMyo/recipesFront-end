@@ -90,6 +90,20 @@ const Recipes = () => {
     });
   }, []);
 
+  const clearData = () => {
+    setTitle("");
+    setKitchenNote("");
+    setAuthorNote("");
+    setCookTime("");
+    setServing("");
+    setPrepTime("");
+    setImages([]);
+    setType();
+    setSelectedDishTypes([]);
+    setIngredients([{ qty: "", measurement: "", name: "" }]);
+    setSteps([{ step: "" }]);
+  };
+
   const postData = async () => {
     try {
       const formData = new FormData();
@@ -143,13 +157,15 @@ const Recipes = () => {
 
       console.log(response.data);
       toast.success("Recipe created successfully");
+
+      // Reset all state variables to initial values after successful submission
     } catch (error) {
       console.error("Error creating recipe:", error);
       toast.error("Failed to create recipe");
     }
   };
 
-  const submitHandle = (e) => {
+  const submitHandle = async (e) => {
     e.preventDefault();
     if (
       !title ||
@@ -166,7 +182,8 @@ const Recipes = () => {
       toast.error("Please fill in all fields");
       return;
     }
-    postData();
+    await postData(); // Wait for postData() to finish before resetting state
+    clearData();
   };
 
   return (
@@ -188,6 +205,7 @@ const Recipes = () => {
                 <input
                   type="text"
                   name="title"
+                  value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Chicken Noodle Soup"
@@ -198,6 +216,7 @@ const Recipes = () => {
                   Author_note
                 </label>
                 <textarea
+                  value={author_note}
                   onChange={(e) => setAuthorNote(e.target.value)}
                   name="author_note" // Ensure the name attribute is set correctly
                   className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
@@ -211,6 +230,7 @@ const Recipes = () => {
                   Kitchen_note
                 </label>
                 <textarea
+                  value={kitchen_note}
                   name="kitchen_note"
                   onChange={(e) => setKitchenNote(e.target.value)}
                   className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
@@ -224,6 +244,7 @@ const Recipes = () => {
                     Cook Time
                   </label>
                   <input
+                    value={cookTime}
                     type="text"
                     name="cook_time"
                     onChange={(e) => setCookTime(e.target.value)}
@@ -236,6 +257,7 @@ const Recipes = () => {
                     Prep Time
                   </label>
                   <input
+                    value={prepTime}
                     type="text"
                     name="prep_time"
                     onChange={(e) => setPrepTime(e.target.value)}
@@ -248,6 +270,7 @@ const Recipes = () => {
                     Serving
                   </label>
                   <input
+                    value={serving}
                     name="serving"
                     type="text"
                     onChange={(e) => setServing(e.target.value)}
@@ -256,16 +279,18 @@ const Recipes = () => {
                   />
                 </div>
               </div>
-              <div className="mb-3">
-                <label className="block mb-2">Select Image </label>
-                <input
-                  type="file"
-                  name="image[]"
-                  className="rounded-lg border w-full"
-                  onChange={handleImageChange}
-                  multiple
-                />
-              </div>
+              {images.length === 0 && (
+                <div className="mb-3">
+                  <label className="block mb-2">Select Image </label>
+                  <input
+                    type="file"
+                    name="image[]"
+                    className="rounded-lg border w-full"
+                    onChange={handleImageChange}
+                    multiple
+                  />
+                </div>
+              )}
 
               <div>
                 <div className="mb-3">
@@ -402,13 +427,12 @@ const Recipes = () => {
                 <select
                   name="type"
                   id="countries"
-                  value={type}
+                  defaultValue={type}
                   onChange={(e) => setType(e.target.value)}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 >
-                  <option selected value="free">
-                    Free
-                  </option>
+                  <option selected>select an option</option>
+                  <option value="free">Free</option>
                   <option value="premium">Premium</option>
                 </select>
               </div>

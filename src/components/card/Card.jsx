@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 
 const Card = ({ recipe, image }) => {
   // console.log(recipe.images[0].name);
+  console.log(recipe);
 
   return (
     <>
@@ -28,6 +29,7 @@ const Card = ({ recipe, image }) => {
               <h5 className="italic text-xs">
                 Rating:
                 <span className="text-xs">
+                  <i className="text-yellow-300 fa-solid fa-star"></i>
                   <i className="text-yellow-300 fa-solid fa-star"></i>
                   <i className="text-yellow-300 fa-solid fa-star"></i>
                   <i className="text-yellow-300 fa-solid fa-star"></i>

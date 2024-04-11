@@ -8,7 +8,7 @@ const Recipe = () => {
   const [dishtypes, setDishtypes] = useState([]);
   const [selectedDishTypes, setSelectedDishTypes] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage] = useState(6); // Number of items per page, adjust as needed
+  const [perPage] = useState(9); // Number of items per page, adjust as needed
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState();
@@ -94,7 +94,7 @@ const Recipe = () => {
       ) : error ? (
         <div>Error: {error}</div>
       ) : (
-        <div className="container  mx-auto mt-24">
+        <div className="max-w-6xl  mx-auto mt-24">
           <div className="grid grid-cols-12 gap-2">
             <div className=" col-span-12 md:col-span-3   ">
               <div className="w-full rounded shadow-sm h-[600px]">
@@ -129,7 +129,7 @@ const Recipe = () => {
                   </div>
                 ))}
               </div>
-              {currentRecipes && (
+              {filterData.length > 0 ? (
                 <nav className="flex justify-end items-center gap-x-1">
                   <button
                     type="button"
@@ -165,6 +165,8 @@ const Recipe = () => {
                     <span>Next</span>
                   </button>
                 </nav>
+              ) : (
+                <h5>No data available</h5>
               )}
             </div>
           </div>
