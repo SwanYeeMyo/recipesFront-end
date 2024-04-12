@@ -197,7 +197,7 @@ const NavSideBar = () => {
                   </button>
                   <div className="flex">
                     <div className="flex-1 p-7">
-                      <h2 className="text-2xl md:text-3xl font-merri text-center text-navy-blue">
+                      <h2 className="mb-5 text-2xl md:text-3xl font-merri text-center text-navy-blue">
                         Enjoy our premium features
                       </h2>
 
@@ -209,7 +209,6 @@ const NavSideBar = () => {
                             id="floating_email"
                             class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                             placeholder=" "
-                            required
                           />
                           <label
                             for="floating_email"
@@ -219,7 +218,7 @@ const NavSideBar = () => {
                           </label>
                         </div>
 
-                        <div class="grid md:grid-cols-2 md:gap-6">
+                        {/* <div class="grid md:grid-cols-2 md:gap-6">
                           <div class="relative z-0 w-full mb-5 group">
                             <input
                               type="text"
@@ -252,16 +251,14 @@ const NavSideBar = () => {
                               Last name
                             </label>
                           </div>
-                        </div>
+                        </div> */}
                         <div class="relative z-0 w-full mb-5 group">
                           <input
-                            type="tel"
-                            pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+                            type="text"
                             name="floating_phone"
                             id="floating_phone"
                             class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                             placeholder=" "
-                            required
                           />
                           <label
                             for="floating_phone"
@@ -270,9 +267,16 @@ const NavSideBar = () => {
                             Phone number (123-456-7890)
                           </label>
                         </div>
+                        <p className="my-5 text-center">
+                          After submit please contact our facebook messenger{" "}
+                          <a href="#" target="_blank">
+                            Flavor Fusion
+                          </a>
+                        </p>
+
                         <button
                           type="submit"
-                          class="text-white block mx-auto bg-slate-900 hover:bg-slate-800 focus:ring-4 focus:outline-none focus:ring-slate-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-slate-600 dark:hover:bg-slate-700 dark:focus:ring-blue-800"
+                          class=" text-white block mx-auto bg-navy-blue hover:bg-slate-800 focus:ring-4 focus:outline-none focus:ring-slate-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-slate-600 dark:hover:bg-slate-700 dark:focus:ring-blue-800"
                           style={{ width: "100%" }}
                         >
                           SUBSCRIBE
