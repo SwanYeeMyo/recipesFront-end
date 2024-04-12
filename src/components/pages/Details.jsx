@@ -323,32 +323,7 @@ const Details = () => {
           <p className="text-regular font-regular">
             See what other foodies are saying
           </p>
-          <div className="flex flex-wrap gap-8">
-            <img
-              className="rounded-full w-20 h-20 object-cover"
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSA9SdRTT5veissNXjFWRG6e1nxaqNHgf12dw&s"
-              alt="profile1"
-            />
-            <img
-              className="rounded-full w-20 h-20 object-cover"
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSA9SdRTT5veissNXjFWRG6e1nxaqNHgf12dw&s"
-              alt="profile1"
-            />
-            <img
-              className="rounded-full w-20 h-20 object-cover"
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSA9SdRTT5veissNXjFWRG6e1nxaqNHgf12dw&s"
-              alt="profile1"
-            />
-            <img
-              className="rounded-full w-20 h-20 object-cover"
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSA9SdRTT5veissNXjFWRG6e1nxaqNHgf12dw&s"
-              alt="profile1"
-            />
-          </div>
-          <div className="border-2 border-slate-500 min-w-32 h-9 rounded-3xl flex justify-center items-center bg-white hover:bg-slate-200">
-            <i className="fa-regular fa-message me-2 text-white"></i>
-            <span className="font-light text-medium">REVIEW</span>
-          </div>
+          <div className="flex flex-wrap gap-8"></div>
         </div>
         <div className="mt-16">
           <h2 className="text-sub-title font-bold opacity-70 text-center">
@@ -387,71 +362,30 @@ const Details = () => {
               )}
             </div>
           </div>
-          <div>
-            <div>
-              <button
-                id="dropdownDefaultButton"
-                data-dropdown-toggle="dropdown"
-                className="text-white bg-navy-blue focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                type="button"
-              >
-                Order By{" "}
-                <svg
-                  className="w-2.5 h-2.5 ms-3"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 10 6"
-                >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="m1 1 4 4 4-4"
-                  />
-                </svg>
-              </button>
-              <div
-                id="dropdown"
-                className="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700"
-              >
-                <ul
-                  className="py-2 text-sm text-gray-700 dark:text-gray-200"
-                  aria-labelledby="dropdownDefaultButton"
-                >
-                  <li>
-                    <a
-                      href="#"
-                      className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                    >
-                      Ascending
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                    >
-                      Descending
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
+          <div></div>
           <hr className="mb-10 mt-5 h-[2px] bg-slate-300" />
           {reviews.map((review, index) => (
             <div key={index} className="flex flex-col md:flex-row gap-10 mb-5">
-              <div>
-                <img
-                  src={
-                    "http://127.0.0.1:8000/storage/user/" + review.user.image
-                  }
-                  className="rounded-full w-[50px] h-[50px] object-cover"
-                  alt=""
-                />
-              </div>
+              {review.user.image ? (
+                <div>
+                  <img
+                    src={
+                      "http://127.0.0.1:8000/storage/user/" + review.user.image
+                    }
+                    className="rounded-full w-[50px] h-[50px] object-cover"
+                    alt=""
+                  />
+                </div>
+              ) : (
+                <div>
+                  <img
+                    src="https://thumbs.dreamstime.com/b/default-avatar-profile-icon-vector-social-media-user-image-182145777.jpg"
+                    className="rounded-full w-[50px] h-[50px] object-cover"
+                    alt=""
+                  />
+                </div>
+              )}
+
               <div>
                 <div>
                   <span className="me-5 font-semibold text-regular">
