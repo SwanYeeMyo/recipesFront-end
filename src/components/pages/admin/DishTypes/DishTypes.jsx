@@ -8,6 +8,7 @@ import { Button, Modal } from "flowbite-react";
 
 const DishTypes = () => {
   const [dishTypes, setDishTypes] = useState([]);
+  const [clickID, setClickID] = useState(0);
   const [openModal, setOpenModal] = useState(false);
 
   const token = localStorage.getItem("token");
@@ -49,7 +50,6 @@ const DishTypes = () => {
       }
 
       window.location.reload();
-      console.log("Dish type deleted successfully");
       toast.success("Dish type deleted successfully");
     } catch (error) {
       console.error("Failed to delete the Dish type:", error);
@@ -61,7 +61,7 @@ const DishTypes = () => {
       <div className="p-4 sm:ml-64">
         <ToastContainer />
         <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
-          <Link to="/dishtypes/create">
+          <Link to="/dashboard/dishtypes/create">
             <button
               type="button"
               className="text-white bg-gray-600 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
@@ -85,17 +85,17 @@ const DishTypes = () => {
               <tbody>
                 {dishTypes.map((dishtype, index) => (
                   <tr key={dishtype.id}>
-                    <td className="px-6 py-4">{index + 1}</td>
+                    <td className="px-6 py-4">{dishtype.id}</td>
                     <td className="px-6 py-4">{dishtype.name}</td>
                     <td className="px-6 py-4 flex">
                       <Link
-                        to={`/dishtypes/${dishtype.id}`}
+                        to={`/dashboard/dishtypes/${dishtype.id}`}
                         className="font-medium text-blue-600 dark:text-blue-500 hover:underline me-4"
                       >
                         Edit
                       </Link>
                       <button
-                        onClick={() => setOpenModal(true)}
+                        onClick={() => { setOpenModal(true); setClickID(dishtype.id) }}
                         className="font-medium text-red-600 dark:text-blue-500 hover:underline inline"
                       >
                         Delete
@@ -115,7 +115,7 @@ const DishTypes = () => {
                             </h3>
                             <div className="flex justify-center gap-4">
                               <button
-                                onClick={() => deleteDishType(dishtype.id)}
+                                onClick={() => deleteDishType(clickID)}
                                 className="font-medium text-red-600 dark:text-blue-500 hover:underline inline"
                               >
                                 Delete

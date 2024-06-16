@@ -10,6 +10,8 @@ import { HiOutlineExclamationCircle } from "react-icons/hi";
 const Users = () => {
 	const [userData, setUserData] = useState([]);
 	const [openModal, setOpenModal] = useState(false);
+	const [clickID, setClickID] = useState(0);
+
 	const token = localStorage.getItem("token");
 
 	// Check if token exists
@@ -36,7 +38,9 @@ const Users = () => {
 	}, []);
 
 	const deleteUser = async (userId) => {
+
 		try {
+			console.log(userId);
 			const response = await fetch(
 				`http://127.0.0.1:8000/api/users/${userId}`,
 				{
@@ -64,6 +68,14 @@ const Users = () => {
 			<div className="p-4 sm:ml-64">
 				<ToastContainer />
 				<div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
+					<Link to="/dashboard/users/create">
+						<button
+							type="button"
+							className="text-white bg-gray-600 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
+						>
+							Create User
+						</button>
+					</Link>
 					<div className="relative w-full mt-10 overflow-x-auto shadow-md sm:rounded-lg">
 						<table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
 							<thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -85,20 +97,20 @@ const Users = () => {
 							<tbody>
 								{userData.map((user, index) => (
 									<tr key={user.id}>
-										<td className="px-6 py-4">{index + 1}</td>
+										<td className="px-6 py-4">{user.id}</td>
 										<td className="px-6 py-4">{user.name}</td>
 										<td className="px-6 py-4">{user.email}</td>
 										<td className="px-6 py-4">{user.type}</td>
 										{user.roles?.[0]?.name === "super admin" ? null : (
 											<td className="px-6 py-4 flex">
 												<Link
-													to={`/users/${user.id}`}
+													to={`/dashboard/users/${user.id}`}
 													className="font-medium text-blue-600 dark:text-blue-500 hover:underline me-4"
 												>
 													Edit
 												</Link>
 												<button
-													onClick={() => setOpenModal(true)}
+													onClick={() => { setOpenModal(true); setClickID(user.id) }}
 													className="font-medium text-red-600 dark:text-blue-500 hover:underline inline"
 												>
 													Delete
@@ -118,7 +130,7 @@ const Users = () => {
 															</h3>
 															<div className="flex justify-center gap-4">
 																<button
-																	onClick={() => deleteUser(user.id)}
+																	onClick={() => deleteUser(clickID)}
 																	className="font-medium text-red-600 dark:text-blue-500 hover:underline inline"
 																>
 																	Delete

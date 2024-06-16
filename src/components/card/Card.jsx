@@ -1,7 +1,13 @@
+import { Button } from "flowbite-react";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const Card = ({ recipe, image }) => {
+  const location = useLocation();
+
+  const show = location.pathname.includes("/account/recipes");
+  const token = localStorage.getItem("token");
+
   const calculateAverageRating = (ratings) => {
     if (ratings.length === 0) return 0;
 
@@ -19,6 +25,31 @@ const Card = ({ recipe, image }) => {
 
     return <span className="text-xs">{stars}</span>;
   };
+
+  const recipeDelete = async (id) => {
+    try {
+      console.log(id);
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/recipes/${id}/delete`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Error deleting dish type");
+      }
+
+      window.location.reload();
+      toast.success("Recipe deleted successfully");
+    } catch (error) {
+      console.error("Failed to delete the Recipe:", error);
+    }
+  }
 
   return (
     <>
@@ -47,13 +78,24 @@ const Card = ({ recipe, image }) => {
             </div>
           </div>
           <div className="">
-            <Link
-              to={`/recipes/${recipe.id}`}
-              className="block text-center text-sm w-[152px] p-2 bg-navy-blue text-white"
-            >
-              View
-            </Link>
-
+            <div className="flex justify-start items-start space-x-5">
+              <Link
+                to={`/recipes/${recipe.id}`}
+                className="block text-center text-sm w-[152px] p-2 bg-navy-blue text-white rounded-md"
+              >
+                View
+              </Link>
+              {
+                show && (
+                  <button
+                    className="block text-center text-sm w-[152px] p-2 bg-red-500 text-white rounded-md"
+                    onClick={() => recipeDelete(recipe.id)}
+                  >
+                    Delete
+                  </button>
+                )
+              }
+            </div>
             <button className="uppercase absolute top-1 text-xs p-1 bg-yellow-300 right-2  ">
               {recipe.type}
             </button>

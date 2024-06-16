@@ -68,11 +68,12 @@ const EditUser = () => {
 				console.log(res);
 				localStorage.setItem("user", res.data.data.name);
 				// After successful update, fetch the updated user data
-				const updatedUserData = await axios.get(
-					"http://127.0.0.1:8000/api/users/" + id
-				);
-				setUserData(updatedUserData.data.data);
+				// const updatedUserData = await axios.get(
+				// 	"http://127.0.0.1:8000/api/users/" + id
+				// );
+				// setUserData(updatedUserData.data.data);
 				toast.success("User data updated successfully");
+				navigate("/dashboard/users")
 			})
 			.catch((err) => {
 				if (err.response) {

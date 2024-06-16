@@ -145,11 +145,10 @@ const Recipe = () => {
                         key={i}
                         type="button"
                         onClick={() => paginate(i + 1)}
-                        className={`min-h-[38px] min-w-[38px] flex justify-center items-center ${
-                          currentPage === i + 1
-                            ? "bg-navy-blue text-white"
-                            : "text-gray-800 hover:bg-gray-100"
-                        } py-2 px-3 text-sm rounded-lg focus:outline-none focus:bg-navy-blue disabled:opacity-50 disabled:pointer-events-none `}
+                        className={`min-h-[38px] min-w-[38px] flex justify-center items-center ${currentPage === i + 1
+                          ? "bg-navy-blue text-white"
+                          : "text-gray-800 hover:bg-gray-100"
+                          } py-2 px-3 text-sm rounded-lg focus:outline-none focus:bg-navy-blue disabled:opacity-50 disabled:pointer-events-none `}
                         aria-current={currentPage === i + 1 ? "page" : null}
                       >
                         {i + 1}

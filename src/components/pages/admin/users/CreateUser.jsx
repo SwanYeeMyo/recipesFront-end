@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Button } from "../button/Button";
-import axios from "axios";
+import axios from 'axios';
+import { Button } from 'flowbite-react';
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom';
 
-const SignUp = () => {
+const CreateUser = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -54,31 +54,21 @@ const SignUp = () => {
             gender,
           }
         );
-
-        navigate("/login");
+        navigate("/dashboard/users");
       } catch (error) {
         console.error("Error:", error);
         // Handle error
       }
     }
   };
+
   return (
-    <section
-      className="bg-cover bg-center justify-center flex items-center h-screen"
-      style={{
-        backgroundImage:
-          "url('https://i.pinimg.com/originals/1f/2e/d7/1f2ed796410477e1a734a08a516a7c9e.jpg')",
-      }}
-    >
+    <div className="p-4 sm:ml-64">
       <div className="text-start mt-28 md:mt-20 w-[650px] mx-auto p-5 md:p-12 bg-white rounded-lg shadow">
         <form onSubmit={handleSubmit}>
           <h3 className="mb-3 uppercase font-merri font-bold text-3xl md:text-section text-green-leave">
-            Create an account
+            Create a User
           </h3>
-          <p className="mb-5 opacity-55">
-            Already have a flavor fusion account ? log in{" "}
-            <Link to={"/login"}>Here !</Link>
-          </p>
           <div className="mb-6">
             <input
               type="text"
@@ -145,15 +135,18 @@ const SignUp = () => {
             </select>
             {errors.gender && <p className="text-red-500">{errors.gender}</p>}
           </div>
-          <Button type="Join Now" />
-          <p className="text-black opacity-55">
-            By clicking join now, you agree to our Terms of Service and Privacy
-            Policy
-          </p>
+          <div className="my-5">
+            <button
+              type='submit'
+              className="w-full p-4 rounded-md bg-navy-blue text-white uppercase"
+            >
+              Join Now
+            </button>
+          </div>
         </form>
       </div>
-    </section>
-  );
-};
+    </div>
+  )
+}
 
-export default SignUp;
+export default CreateUser

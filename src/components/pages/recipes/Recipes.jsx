@@ -1,8 +1,15 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 const Recipes = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { id } = useParams();
+
+  const update = location.pathname.includes("update");
+
   const [title, setTitle] = useState("");
   const [kitchen_note, setKitchenNote] = useState("");
   const [author_note, setAuthorNote] = useState("");
@@ -10,9 +17,12 @@ const Recipes = () => {
   const [serving, setServing] = useState("");
   const [prepTime, setPrepTime] = useState("");
   const [images, setImages] = useState([]);
-  const [dishTypes, setDishType] = useState([]);
+  const [imagePreviews, setImagePreviews] = useState([]);
   const [type, setType] = useState();
   const [selectedDishTypes, setSelectedDishTypes] = useState([]);
+
+  const [dishTypes, setDishType] = useState([]);
+  const [detail, setDetail] = useState([]);
 
   const user_id = localStorage.getItem("id");
 
@@ -28,6 +38,28 @@ const Recipes = () => {
       step: "",
     },
   ]);
+
+
+  useEffect(() => {
+    if (id) {
+      axios.get(`http://127.0.0.1:8000/api/recipes/${id}/detail`).then((res) => {
+        const recipe = res.data.data;
+        setDetail(recipe)
+        setTitle(recipe.title)
+        setKitchenNote(recipe.kitchen_note)
+        setAuthorNote(recipe.author_note)
+        setCookTime(recipe.cook_time)
+        setServing(recipe.serving)
+        setPrepTime(recipe.prep_time)
+        setType(recipe.type)
+        setSelectedDishTypes(recipe.dish_types.map(dish => dish.id));
+        setSteps(recipe.directions);
+        setIngredients(recipe.ingredients);
+      });
+    }
+  }, [update, id]);
+
+  console.log(detail);
 
   const handleInputChange = (index, event) => {
     const value = [...ingredients];
@@ -82,11 +114,19 @@ const Recipes = () => {
     const selectedImages = Array.from(e.target.files);
     // Update the images state by concatenating the new images with the existing ones
     setImages([...images, ...selectedImages]);
+
+    const previews = selectedImages.map((image) =>
+      URL.createObjectURL(image)
+    );
+
+    setImagePreviews([...imagePreviews, ...previews]);
   };
+
+  console.log(images);
+
   useEffect(() => {
     axios.get("http://127.0.0.1:8000/api/dishTypes").then((res) => {
       setDishType(res.data.data);
-      console.log(res.data.data[0].name);
     });
   }, []);
 
@@ -97,6 +137,7 @@ const Recipes = () => {
     setCookTime("");
     setServing("");
     setPrepTime("");
+    setImagePreviews([]);
     setImages([]);
     setType();
     setSelectedDishTypes([]);
@@ -145,18 +186,36 @@ const Recipes = () => {
       }
 
       // Send the data to the Laravel API endpoint
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/recipes",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+      if (id) {
+        const response = await axios.post(
+          `http://127.0.0.1:8000/api/recipes/${id}/update`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        if (response.data.status === 200) {
+          navigate("/dashboard/recipes");
         }
-      );
-
-      console.log(response.data);
+      } else {
+        const response = await axios.post(
+          `http://127.0.0.1:8000/api/recipes`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        if (response.data.status === 201) {
+          navigate("/dashboard/recipes");
+        }
+      }
       toast.success("Recipe created successfully");
+
+
 
       // Reset all state variables to initial values after successful submission
     } catch (error) {
@@ -176,8 +235,7 @@ const Recipes = () => {
         (ingredient) =>
           !ingredient.qty || !ingredient.measurement || !ingredient.name
       ) ||
-      steps.some((direction) => !direction.step) ||
-      images.length === 0
+      steps.some((direction) => !direction.step)
     ) {
       toast.error("Please fill in all fields");
       return;
@@ -207,7 +265,7 @@ const Recipes = () => {
                   name="title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400/25 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Chicken Noodle Soup"
                 />
               </div>
@@ -248,7 +306,7 @@ const Recipes = () => {
                     type="text"
                     name="cook_time"
                     onChange={(e) => setCookTime(e.target.value)}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400/25 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   />
                 </div>
                 <div className="flex-grow mb-4">
@@ -276,18 +334,6 @@ const Recipes = () => {
                   />
                 </div>
               </div>
-              {images.length === 0 && (
-                <div className="mb-3">
-                  <label className="block mb-2">Select Image </label>
-                  <input
-                    type="file"
-                    name="image[]"
-                    className="rounded-lg border w-full"
-                    onChange={handleImageChange}
-                    multiple
-                  />
-                </div>
-              )}
 
               <div>
                 <div className="mb-3">
@@ -306,7 +352,7 @@ const Recipes = () => {
                         value={inputField.qty}
                         onChange={(event) => handleInputChange(index, event)}
                         className="border bg-gray-50 rounded-lg border-gray-300"
-                        placeholder="1"
+                      // placeholder="1"
                       />
                     </div>
                     <div className="flex flex-grow flex-col">
@@ -317,7 +363,7 @@ const Recipes = () => {
                         value={inputField.measurement}
                         onChange={(event) => handleInputChange(index, event)}
                         className="border bg-gray-50 rounded-lg border-gray-300"
-                        placeholder="table spoon of"
+                      // placeholder="table spoon of"
                       />
                     </div>
                     <div className="flex  flex-col">
@@ -328,7 +374,7 @@ const Recipes = () => {
                         value={inputField.name}
                         onChange={(event) => handleInputChange(index, event)}
                         className="border bg-gray-50 rounded-lg border-gray-300"
-                        placeholder="sugar"
+                      // placeholder="sugar"
                       />
                     </div>
 
@@ -421,7 +467,7 @@ const Recipes = () => {
               <div className="mb-3">
                 <label
                   for="countries"
-                  class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
                   Select a type
                 </label>
@@ -433,16 +479,38 @@ const Recipes = () => {
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 >
                   <option selected>select an option</option>
-                  <option value="free">Free</option>
-                  <option value="premium">Premium</option>
+                  <option value="free" selected={type == "free"}>Free</option>
+                  <option value="premium" selected={type == "premium"}>Premium</option>
                 </select>
+              </div>
+              <div className="mb-3">
+                <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                  Upload Images
+                </label>
+                <input
+                  type="file"
+                  name="images"
+                  multiple
+                  onChange={handleImageChange}
+                  className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                />
+                <div className="mt-2 grid grid-cols-3 gap-4">
+                  {imagePreviews.map((src, index) => (
+                    <img
+                      key={index}
+                      src={src}
+                      alt={`Preview ${index}`}
+                      className="h-full w-full block object-cover rounded-lg"
+                    />
+                  ))}
+                </div>
               </div>
               <div className="flex justify-end ">
                 <button
                   type="submit"
                   className="my-3 bg-green-400 w-[150px] rounded-md  text-white border p-1"
                 >
-                  Create
+                  {id ? "update" : "Create"}
                 </button>
               </div>
             </form>

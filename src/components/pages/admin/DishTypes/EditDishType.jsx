@@ -37,7 +37,7 @@ const EditDishType = () => {
       .then((res) => {
         console.log(res);
         setDishType(res.data.data);
-        navigate("/dishtypes");
+        navigate("/dashboard/dishtypes");
       })
       .catch((err) => {
         console.log(err);

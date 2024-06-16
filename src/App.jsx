@@ -10,15 +10,18 @@ import Navbar from "./components/layouts/Navbar";
 import Recipe from "./components/pages/Recipe";
 import Footer from "./components/layouts/Footer";
 import SideBar from "./components/pages/SideBar";
-import Recipes from "./components/pages/user/Recipes";
+import Recipes from "./components/pages/recipes/Recipes";
 import Account from "./components/pages/user/Account";
-import Users from "./components/pages/Users";
-import EditUser from "./components/pages/EditUser";
-import DishTypes from "./components/pages/DishTypes/DishTypes";
-import CreateDishType from "./components/pages/DishTypes/CreateDishType";
-import EditDishType from "./components/pages/DishTypes/EditDishType";
+import Users from "./components/pages/admin/users/Users";
+import EditUser from "./components/pages/admin/users/EditUser";
+import DishTypes from "./components/pages/admin/DishTypes/DishTypes";
+import CreateDishType from "./components/pages/admin/DishTypes/CreateDishType";
+import EditDishType from "./components/pages/admin/DishTypes/EditDishType";
 import Details from "./components/pages/Details";
 import RecipeSearch from "./components/pages/RecipeSearch";
+import UserRecipe from "./components/pages/recipes/UserRecipe";
+import AdminRecipes from "./components/pages/admin/recipes/AdminRecipes";
+import CreateUser from "./components/pages/admin/users/CreateUser";
 function App() {
   return (
     <BrowserRouter>
@@ -31,6 +34,7 @@ function AppContent() {
   const location = useLocation();
   // Array of routes where Navbar should not be shown
   const excludedRoutes = [
+    "/dashboard",
     "/account",
     "/account/recipes",
     "/account/recipes/create",
@@ -66,16 +70,27 @@ function AppContent() {
 
         {localStorage.getItem("token") && (
           <>
+            <Route path="/dashboard" element={<Account />} />
+
+            <Route path="/dashboard/users" element={<Users />} />
+            <Route path="/dashboard/users/create" element={<CreateUser />} />
+            <Route path="/dashboard/users/:id" element={<EditUser />} />
+
+            <Route path="/dashboard/dishtypes" element={<DishTypes />} />
+            <Route path="/dashboard/dishtypes/create" element={<CreateDishType />} />
+            <Route path="/dashboard/dishtypes/:id" element={<EditDishType />} />
+
+
+            <Route path="/dashboard/recipes" element={<AdminRecipes />} />
+            <Route path="/dashboard/recipes/create" element={<Recipes />} />
+            <Route path="/dashboard/recipes/:id/update" element={<Recipes />} />
+
             <Route path="/account" element={<Account />} />
-            <Route path="/users" element={<Users />} />
-            <Route path="/users/:id" element={<EditUser />} />
-            <Route path="/dishtypes" element={<DishTypes />} />
-            <Route path="/dishtypes/create" element={<CreateDishType />} />
-            <Route path="/dishtypes/:id" element={<EditDishType />} />
+            <Route path="/account/recipes" element={<UserRecipe />} />
           </>
         )}
         {localStorage.getItem("type") !== "free" && (
-          <Route path="/account/recipes" element={<Recipes />} />
+          <Route path="/account/recipes/create" element={<Recipes />} />
         )}
         <Route path="/account/profile" element={<Account />}></Route>
         <Route path="/recipes/:id" element={<Details />}></Route>

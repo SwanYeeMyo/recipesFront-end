@@ -4,6 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import img from "../../../assets/img/user.jpg";
 
 const Account = () => {
   const navigate = useNavigate();
@@ -34,7 +35,6 @@ const Account = () => {
         try {
           const res = await axios.get("http://127.0.0.1:8000/api/users/" + id);
           setUserData(res.data.data);
-          console.log(res.data.data);
         } catch (error) {
           console.error("Error fetching user data:", error);
           toast.error("Failed to fetch user data");
@@ -47,7 +47,6 @@ const Account = () => {
 
     fetchUserData();
   }, [id]);
-  console.log("http://127.0.0.1:8000/storage/user/" + userData.image);
   // console.log(userData.image);
   const updateHandler = (e) => {
     e.preventDefault();
@@ -63,7 +62,6 @@ const Account = () => {
       formData.append("type", "free");
     }
     for (var pair of formData.entries()) {
-      console.log(pair[0] + ", " + pair[1]);
     }
     axios
       .post(`http://127.0.0.1:8000/api/users/${id}/update/`, formData, {
@@ -72,7 +70,6 @@ const Account = () => {
         },
       })
       .then(async (res) => {
-        console.log(res);
         localStorage.setItem("user", res.data.data.name);
         // After successful update, fetch the updated user data
         const updatedUserData = await axios.get(
@@ -90,6 +87,9 @@ const Account = () => {
         toast.error("Failed to update user data");
       });
   };
+
+  console.log(userData);
+  console.log(userData.image);
 
   return (
     <>
@@ -113,7 +113,7 @@ const Account = () => {
                 ) : (
                   <div className="max-w-lg mx-auto">
                     <img
-                      src="https://thumbs.dreamstime.com/b/default-avatar-profile-icon-vector-social-media-user-image-182145777.jpg"
+                      src={img}
                       className=""
                       alt=""
                     />
