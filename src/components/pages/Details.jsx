@@ -160,7 +160,7 @@ const Details = () => {
             <p>{totalRatings} Ratings</p>
           </div>
           <div>
-            <p>View {reviews.length} Reviews</p>
+            <p>& {reviews.length} Reviews</p>
           </div>
         </div>
         <div className="flex gap-3 mb-5 justify-center mt-5">

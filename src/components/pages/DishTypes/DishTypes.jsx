@@ -9,6 +9,7 @@ import { Button, Modal } from "flowbite-react";
 const DishTypes = () => {
   const [dishTypes, setDishTypes] = useState([]);
   const [openModal, setOpenModal] = useState(false);
+  const [clickId, setClickId] = useState("");
 
   const token = localStorage.getItem("token");
   useEffect(() => {
@@ -95,7 +96,9 @@ const DishTypes = () => {
                         Edit
                       </Link>
                       <button
-                        onClick={() => setOpenModal(true)}
+                        onClick={() => (
+                          setClickId(dishtype.id), setOpenModal(true)
+                        )}
                         className="font-medium text-red-600 dark:text-blue-500 hover:underline inline"
                       >
                         Delete
@@ -115,7 +118,7 @@ const DishTypes = () => {
                             </h3>
                             <div className="flex justify-center gap-4">
                               <button
-                                onClick={() => deleteDishType(dishtype.id)}
+                                onClick={() => deleteDishType(clickId)}
                                 className="font-medium text-red-600 dark:text-blue-500 hover:underline inline"
                               >
                                 Delete
